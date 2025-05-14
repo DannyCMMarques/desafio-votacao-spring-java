@@ -10,14 +10,14 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "associados") 
+@Table(name = "associados")
 public class Associado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @NotBlank
-    String nome;
+    private String nome;
     @NotBlank
-    String cpf;
+    private String cpf;
 }
