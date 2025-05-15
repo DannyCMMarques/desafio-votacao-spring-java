@@ -4,8 +4,10 @@ import com.crud.demo.domain.enums.StatusPautaEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class PautaResponseDTO {
     @Schema(description = "Id da Pauta")
     Long id;

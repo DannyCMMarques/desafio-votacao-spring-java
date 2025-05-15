@@ -5,8 +5,10 @@ import com.crud.demo.domain.enums.StatusSessaoEnum;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class SessaoResponseDTO {
   @Schema(description = "Identificador único da sessão", example = "1")
     private Long id;
@@ -15,7 +17,7 @@ public class SessaoResponseDTO {
     private Pauta pauta;
 
   @Schema(description = "Duração da sessão em minutos", example = "1")
-    private Integer duracao = 1;
+    private Integer duracao ;
 
   @Schema(description = "Status atual da sessão", example = "NAO_INICIADA")
     private StatusSessaoEnum status = StatusSessaoEnum.NAO_INICIADA;
