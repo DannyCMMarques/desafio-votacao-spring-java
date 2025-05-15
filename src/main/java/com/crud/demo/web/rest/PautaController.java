@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("api/v1/pauta")
 @RequiredArgsConstructor
-@Tag(name = "Associados", description = "Endpoints para operações com associados")
+@Tag(name = "Pauta", description = "Endpoints para operações com pautas")
 public class PautaController {
 
     private final PautaService pautaService;

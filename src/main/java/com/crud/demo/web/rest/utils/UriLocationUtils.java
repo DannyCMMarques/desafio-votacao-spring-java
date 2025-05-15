@@ -9,7 +9,7 @@ public class UriLocationUtils {
     public static URI criarLocationUri(String path, Object... uriVariables) {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
-                .path(path)
+                .path(path + "/{id}") 
                 .buildAndExpand(uriVariables)
                 .toUri();
     }

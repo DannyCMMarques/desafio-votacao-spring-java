@@ -1,5 +1,9 @@
 package com.crud.demo.service.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.crud.demo.domain.Associado;
@@ -22,17 +26,48 @@ public class AssociadoServiceImpl implements AssociadoService {
 
     @Override
     public AssociadoResponseDTO cadastrarAssociado(AssociadoRequestDTO associadoRequestDTO) {
-
-        associadoValidacaoService.validarExistenciaCPF(associadoRequestDTO.getCpf());
-
+        associadoValidacaoService.validarCPFCadastro(associadoRequestDTO.getCpf());
         Associado associadoEntity = associadoMapper.toEntity(associadoRequestDTO);
-
         Associado associadoSalvo = associadoRepository.save(associadoEntity);
-
         AssociadoResponseDTO associadoResponse = associadoMapper.toDTO(associadoSalvo);
-
         return associadoResponse;
 
     }
 
+    @Override
+    public AssociadoResponseDTO buscarAssociadoPorId(Long id) {
+        Associado associado = associadoValidacaoService.validarExistencia(id);
+        AssociadoResponseDTO associadoResponse = associadoMapper.toDTO(associado);
+        return associadoResponse;
+    }
+
+    @Override
+    public Page<AssociadoResponseDTO> listarTodosAssociados(int page, int size, String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Associado> associadosEncontrados = associadoRepository.findAll(pageable);
+        Page<AssociadoResponseDTO> associadosEncontradosResponse = associadosEncontrados.map(associadoMapper::toDTO);
+        return associadosEncontradosResponse;
+
+    }
+
+    @Override
+    public AssociadoResponseDTO atualizarAssociado(Long id, AssociadoRequestDTO request) {
+        Associado associadoAtualizar = associadoValidacaoService.validarExistencia(id);
+
+        associadoAtualizar.setNome(request.getNome());
+        associadoAtualizar.setCpf(request.getCpf());
+        associadoValidacaoService.validarCPFAtualizacao(associadoAtualizar.getCpf(), id);
+        Associado associadoAtualizado = associadoRepository.save(associadoAtualizar);
+        AssociadoResponseDTO associadoAtualizadoResponse = associadoMapper.toDTO(associadoAtualizado);
+        return associadoAtualizadoResponse;
+    }
+
+    @Override
+    public void deletarAssociado(Long id) {
+        Associado associado = associadoValidacaoService.validarExistencia(id);
+
+        associadoRepository.delete(associado);
+    }
 }
