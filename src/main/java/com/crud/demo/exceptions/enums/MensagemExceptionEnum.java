@@ -12,7 +12,9 @@ public enum MensagemExceptionEnum {
     CPF_DUPLICADO("Já existe um associado com esse CPF cadastrado."),
     SESSAO_EXPIRADA("A sessão de votação já foi encerrada."),
     VOTO_DUPLICADO("Esse associado já votou nessa pauta."),
-    ERRO_INTERNO("Erro interno no servidor.");
+    SESSAO_NAO_CADASTRADA("Sessão não encontrada com ID informado"),
+    ERRO_INTERNO("Erro interno no servidor."),
+    SESSAO_JA_INICIADA("Essa sessão não é possível ser realizada, pois a sessão já foi iniciada");
 
     private final String mensagem;
 
