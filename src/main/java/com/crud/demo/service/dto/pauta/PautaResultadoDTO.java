@@ -8,6 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Schema(implementation = PautaResponseDTO.class)
 public class PautaResultadoDTO extends PautaResponseDTO {
 
     @Schema(description = "Quantidade de votos contra a pauta", example = "10")
@@ -19,7 +20,7 @@ public class PautaResultadoDTO extends PautaResponseDTO {
     @Schema(description = "Quantidade total de votos na pauta", example = "35")
     private Integer votosTotais;
 
-    @Schema(description = "Resultado final da pauta", example = "APROVADo")
+    @Schema(description = "Resultado final da pauta", example = "APROVADO")
     private ResultadoPautaEnum resultado;
 
 }
