@@ -16,9 +16,9 @@ public class VotoRequestDTO {
     @NotNull
     private Boolean voto;
 
-    @Schema(description = "ID da sessão onde o voto será registrado.", example = "1")
-    @NotNull
-    private Long sessao;
+    // @Schema(description = "ID da sessão onde o voto será registrado.", example = "1")
+    // @NotNull
+    // private Long sessao;
 
     @Schema(description = "ID do associado que está votando.", example = "42")
     @NotNull

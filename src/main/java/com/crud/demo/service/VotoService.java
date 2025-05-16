@@ -4,5 +4,5 @@ import com.crud.demo.service.dto.voto.VotoRequestDTO;
 import com.crud.demo.service.dto.voto.VotoResponseDTO;
 
 public interface VotoService {
-    VotoResponseDTO criarVoto(VotoRequestDTO votoRequest);
+    VotoResponseDTO criarVoto(VotoRequestDTO votoRequest,Long id);
 }

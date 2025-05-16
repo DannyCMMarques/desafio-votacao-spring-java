@@ -45,6 +45,7 @@ public class PautaServiceImpl implements PautaService {
         PautaResponseDTO pautaResponseAtualizada = pautaMapper.toDto(pautaAtualizada);
         return pautaResponseAtualizada;
     }
+
     @Override
     public void deletarPauta(Long id) {
         pautaValidacao.verificarStatusNaoVotada(id);
@@ -57,8 +58,9 @@ public class PautaServiceImpl implements PautaService {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return pautaRepository.findAll(pageable)
+        Page<PautaResponseDTO> pautasResponse = pautaRepository.findAll(pageable)
                 .map(pautaMapper::toDto);
+        return pautasResponse;
     }
 
     @Override

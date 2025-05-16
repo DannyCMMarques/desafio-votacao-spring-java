@@ -7,11 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.crud.demo.domain.Pauta;
 import com.crud.demo.domain.Sessao;
+import com.crud.demo.repositories.PautaRepository;
+import com.crud.demo.repositories.SessaoRepository;
+import com.crud.demo.service.IniciarSessaoService;
 import com.crud.demo.service.SessaoService;
 import com.crud.demo.service.SessaoValidacaoService;
-import com.crud.demo.service.VotacaoService;
 import com.crud.demo.service.VotoService;
-import com.crud.demo.service.dto.pauta.PautaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 import com.crud.demo.service.mappers.PautaMapper;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class VotacaoServiceImpl implements VotacaoService {
+public class IniciarSessaoServiceImpl implements IniciarSessaoService {
 
     private final SessaoValidacaoService sessaoValidacao;
     private final VotoService votoService;
@@ -30,17 +31,30 @@ public class VotacaoServiceImpl implements VotacaoService {
     private final SessaoService sessaoService;
     private final PautaMapper pautaMapper;
 
+    private final PautaRepository pautaRepository;
+    private final SessaoRepository sessaoRepository;
+
     @Override
     @Transactional
-    public SessaoIniciadaResponseDTO iniciarVotacao(Long idSessao) {
+    public SessaoIniciadaResponseDTO executar(Long idSessao) {
+        Sessao sessao = this.iniciarSessao(idSessao);
+        this.iniciarPauta(sessao);
+        SessaoIniciadaResponseDTO sessaoAtualizada = sessaoMapper.toIniciadaResponseDTO(sessao);
+        return sessaoAtualizada;
+    }
+
+    public void iniciarPauta(Sessao sessao) {
+        Pauta pauta = sessao.getPauta();
+        pauta.iniciarVotacaoPauta();
+        pautaRepository.save(pauta);
+    }
+
+    public Sessao iniciarSessao(Long idSessao) {
         SessaoResponseDTO sessao = sessaoService.buscarPorId(idSessao);
-        PautaResponseDTO pauta = sessao.getPauta();
-        Pauta pautaEntity = pautaMapper.toEntity(pauta);
-        pautaEntity.iniciarVotacaoPauta();
         Sessao sessaoEntity = sessaoMapper.toEntity(sessao);
         LocalDateTime horarioAtual = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
         sessaoEntity.iniciarSessao(horarioAtual);
-        SessaoIniciadaResponseDTO sessaoAtualizada = sessaoMapper.toIniciadaResponseDTO(sessaoEntity);
-        return sessaoAtualizada;
+        Sessao sessaoInicializada = sessaoRepository.save(sessaoEntity);
+        return sessaoInicializada;
     }
 }

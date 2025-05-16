@@ -41,8 +41,8 @@ public class PautaController {
     @Operation(summary = "Cadastrar uma pauta")
     @PostSwaggerAnnotation
     public ResponseEntity<PautaResponseDTO> cadastrarPauta(
-            @Valid @RequestBody PautaRequestDTO PautaRequestDTO) {
-        PautaResponseDTO pautaCriada = pautaService.criarPauta(PautaRequestDTO);
+            @Valid @RequestBody PautaRequestDTO pautaRequestDTO) {
+        PautaResponseDTO pautaCriada = pautaService.criarPauta(pautaRequestDTO);
         URI location = UriLocationUtils.criarLocationUri("api/v1/pauta", pautaCriada.getId());
         return ResponseEntity.created(location).body(pautaCriada);
     }

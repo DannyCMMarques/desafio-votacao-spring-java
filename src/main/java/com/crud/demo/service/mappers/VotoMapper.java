@@ -21,7 +21,6 @@ public interface VotoMapper {
 
     VotoResponseDTO toDTO(Voto voto);
 
-    
     default VotoEnum mapBooleanToEnum(boolean voto) {
         return voto ? VotoEnum.SIM : VotoEnum.NAO;
     }

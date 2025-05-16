@@ -23,7 +23,7 @@ public interface SessaoMapper {
     @Mapping(target = "status", ignore = true)
     Sessao toEntity(SessaoRequestDTO dto, Pauta pauta);
 
-    @Mapping(target = "pauta", source = "pauta", qualifiedByName = "toResultadoDTO")
+    @Mapping(target = "pauta", source = "pauta", qualifiedByName = "toResponse")
     SessaoResponseDTO toResponseDTO(Sessao sessao);
 
     @Mapping(target = "pauta", source = "pauta", qualifiedByName = "toResultadoDTO")

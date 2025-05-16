@@ -33,7 +33,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/sessao")
 @RequiredArgsConstructor
 @Tag(name = "Sessão", description = "Endpoints para operações com sessões de votação")
-
 public class SessaoController {
     private final SessaoService sessaoService;
 

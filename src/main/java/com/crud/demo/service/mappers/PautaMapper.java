@@ -16,6 +16,7 @@ public interface PautaMapper {
 
   Pauta toEntity(PautaResponseDTO pautaResponse);
 
+  @Named("toResponse")
   PautaResponseDTO toResponseDto(Pauta pauta);
 
   @Named("toResultadoDTO")
