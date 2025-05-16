@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 
 import com.crud.demo.domain.Pauta;
 import com.crud.demo.domain.Sessao;
-import com.crud.demo.domain.enums.StatusPautaEnum;
 import com.crud.demo.service.SessaoService;
 import com.crud.demo.service.SessaoValidacaoService;
 import com.crud.demo.service.VotacaoService;
 import com.crud.demo.service.VotoService;
+import com.crud.demo.service.dto.pauta.PautaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
+import com.crud.demo.service.mappers.PautaMapper;
 import com.crud.demo.service.mappers.SessaoMapper;
 
 import jakarta.transaction.Transactional;
@@ -27,13 +28,15 @@ public class VotacaoServiceImpl implements VotacaoService {
     private final VotoService votoService;
     private final SessaoMapper sessaoMapper;
     private final SessaoService sessaoService;
+    private final PautaMapper pautaMapper;
 
     @Override
     @Transactional
     public SessaoIniciadaResponseDTO iniciarVotacao(Long idSessao) {
         SessaoResponseDTO sessao = sessaoService.buscarPorId(idSessao);
-        Pauta pauta = sessao.getPauta();
-        pauta.iniciarVotacaoPauta();
+        PautaResponseDTO pauta = sessao.getPauta();
+        Pauta pautaEntity = pautaMapper.toEntity(pauta);
+        pautaEntity.iniciarVotacaoPauta();
         Sessao sessaoEntity = sessaoMapper.toEntity(sessao);
         LocalDateTime horarioAtual = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
         sessaoEntity.iniciarSessao(horarioAtual);

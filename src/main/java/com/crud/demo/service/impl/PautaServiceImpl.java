@@ -28,13 +28,9 @@ public class PautaServiceImpl implements PautaService {
 
     @Override
     public PautaResponseDTO criarPauta(PautaRequestDTO pautaRequestDTO) {
-
         Pauta pautaEntity = pautaMapper.toEntity(pautaRequestDTO);
-
         Pauta pautaCriada = pautaRepository.save(pautaEntity);
-
         PautaResponseDTO pautaResponse = pautaMapper.toDto(pautaCriada);
-
         return pautaResponse;
     }
 
@@ -49,15 +45,6 @@ public class PautaServiceImpl implements PautaService {
         PautaResponseDTO pautaResponseAtualizada = pautaMapper.toDto(pautaAtualizada);
         return pautaResponseAtualizada;
     }
-
-    @Override
-    public PautaResultadoDTO atualizarPauta(Pauta pauta) {
-        pauta.setStatus(pauta.getStatus());
-        Pauta pautaAtualizada = pautaRepository.save(pauta);
-        PautaResultadoDTO pautaResultado = pautaMapper.toResultadoDTO(pautaAtualizada);
-        return pautaResultado;
-    }
-
     @Override
     public void deletarPauta(Long id) {
         pautaValidacao.verificarStatusNaoVotada(id);
@@ -71,19 +58,12 @@ public class PautaServiceImpl implements PautaService {
                 : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return pautaRepository.findAll(pageable)
-                .map(pauta -> {
-                    // TODO
-                    // if (pauta.getStatus() == StatusPautaEnum.VOTADA) {
-                    // return pautaMapper.toResultadoDTO(pauta);
-                    // }
-                    return pautaMapper.toDto(pauta);
-                });
+                .map(pautaMapper::toDto);
     }
 
     @Override
     public PautaResponseDTO buscarPorId(Long id) {
         Pauta pautaEncontrada = pautaValidacao.verificarStatusNaoVotada(id);
-
         return pautaMapper.toDto(pautaEncontrada);
     }
 

@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 import com.crud.demo.domain.Associado;
 import com.crud.demo.domain.Sessao;
 import com.crud.demo.domain.Voto;
+import com.crud.demo.domain.enums.VotoEnum;
 import com.crud.demo.service.dto.voto.VotoRequestDTO;
 import com.crud.demo.service.dto.voto.VotoResponseDTO;
 
@@ -20,4 +21,8 @@ public interface VotoMapper {
 
     VotoResponseDTO toDTO(Voto voto);
 
+    
+    default VotoEnum mapBooleanToEnum(boolean voto) {
+        return voto ? VotoEnum.SIM : VotoEnum.NAO;
+    }
 }

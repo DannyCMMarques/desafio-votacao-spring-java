@@ -48,16 +48,15 @@ public class SessaoServiceImpl implements SessaoService {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<SessaoResponseDTO> sessoesEncontradas = sessaoRepository.findAll(pageable)
-                .map(sessaoMapper::toResponseDTO);
-        // TODO realizar lógica sobre responseDTO ou sessaoIniciadaResponse
-        return sessoesEncontradas;
+        Page<Sessao> sessoesEncontradas = sessaoRepository.findAll(pageable);
+        Page<SessaoResponseDTO> sessoesResponse = sessoesEncontradas.map(sessaoMapper::toDto);
+        return sessoesResponse;
     }
 
     @Override
     public SessaoResponseDTO buscarPorId(Long id) {
         Sessao sessao = sessaoValidacaoService.validarEObterSessao(id);
-        SessaoResponseDTO sessaoEncontradaResponse = sessaoMapper.toResponseDTO(sessao);
+        SessaoResponseDTO sessaoEncontradaResponse = sessaoMapper.toDto(sessao);
         return sessaoEncontradaResponse;
     }
 

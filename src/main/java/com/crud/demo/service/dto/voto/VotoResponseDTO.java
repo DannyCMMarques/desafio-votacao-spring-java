@@ -2,6 +2,7 @@ package com.crud.demo.service.dto.voto;
 
 import com.crud.demo.domain.Associado;
 import com.crud.demo.domain.enums.VotoEnum;
+import com.crud.demo.service.dto.associado.AssociadoResponseDTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -17,5 +18,8 @@ private VotoEnum voto;
 private Long sessao;
 
 @Schema(description = "Dados do associado que realizou o voto.")
-private Associado associado;
+private AssociadoResponseDTO  associado;
+
+
+// preciso criar um metofo que se for falso o meu voto vai ser nao e ser for verdadeira vai ser sim 
 }
