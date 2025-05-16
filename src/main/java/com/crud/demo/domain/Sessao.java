@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.crud.demo.domain.enums.StatusSessaoEnum;
+import com.crud.demo.exceptions.sessao.SessaoJaFinalizadaException;
+import com.crud.demo.exceptions.sessao.SessaoJaIniciadaException;
+import com.crud.demo.exceptions.sessao.SessaoNaoIniciadaException;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Column;
@@ -48,4 +51,25 @@ public class Sessao {
     @OneToMany(mappedBy = "sessao")
     @JsonManagedReference
     private List<Voto> votos = new ArrayList<>();
+
+    public void iniciarSessao(LocalDateTime horario) {
+        if (this.status == StatusSessaoEnum.EM_ANDAMENTO) {
+            throw new SessaoJaIniciadaException();
+        } else if (this.status == StatusSessaoEnum.FINALIZADA) {
+            throw new SessaoJaFinalizadaException();
+        }
+        this.status = StatusSessaoEnum.EM_ANDAMENTO;
+        this.horarioInicio = horario;
+    }
+
+    public void finalizarSessao(LocalDateTime horario) {
+        if (this.status == StatusSessaoEnum.NAO_INICIADA) {
+            throw new SessaoNaoIniciadaException();
+        } else if (this.status == StatusSessaoEnum.FINALIZADA) {
+            throw new SessaoJaFinalizadaException();
+        }
+        this.status = StatusSessaoEnum.FINALIZADA;
+        this.horarioFim = horario;
+    }
+
 }

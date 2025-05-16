@@ -8,13 +8,15 @@ import org.springframework.stereotype.Service;
 import com.crud.demo.domain.Pauta;
 import com.crud.demo.domain.Sessao;
 import com.crud.demo.domain.enums.StatusPautaEnum;
-import com.crud.demo.domain.enums.StatusSessaoEnum;
+import com.crud.demo.service.SessaoService;
 import com.crud.demo.service.SessaoValidacaoService;
 import com.crud.demo.service.VotacaoService;
 import com.crud.demo.service.VotoService;
 import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
+import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 import com.crud.demo.service.mappers.SessaoMapper;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,24 +26,18 @@ public class VotacaoServiceImpl implements VotacaoService {
     private final SessaoValidacaoService sessaoValidacao;
     private final VotoService votoService;
     private final SessaoMapper sessaoMapper;
-    private final SessaoServiceImpl sessaoService;
+    private final SessaoService sessaoService;
 
     @Override
+    @Transactional
     public SessaoIniciadaResponseDTO iniciarVotacao(Long idSessao) {
-        Sessao sessao = sessaoValidacao.validarAcao(idSessao);
-
+        SessaoResponseDTO sessao = sessaoService.buscarPorId(idSessao);
         Pauta pauta = sessao.getPauta();
-
-        pauta.setStatus(StatusPautaEnum.EM_VOTACAO);
-
-        sessao.setStatus(StatusSessaoEnum.EM_ANDAMENTO);
-
+        pauta.iniciarVotacaoPauta();
+        Sessao sessaoEntity = sessaoMapper.toEntity(sessao);
         LocalDateTime horarioAtual = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
-        sessao.setHorarioInicio(horarioAtual);
-
-        SessaoIniciadaResponseDTO sessaoAtualizada = sessaoService.atualizarStatusSessao(sessao);
-
+        sessaoEntity.iniciarSessao(horarioAtual);
+        SessaoIniciadaResponseDTO sessaoAtualizada = sessaoMapper.toIniciadaResponseDTO(sessaoEntity);
         return sessaoAtualizada;
-
     }
 }

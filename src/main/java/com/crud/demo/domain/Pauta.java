@@ -50,4 +50,20 @@ public class Pauta {
         this.votosTotais = (votosContra == null ? 0 : votosContra)
                 + (votosFavor == null ? 0 : votosFavor);
     }
+
+    public void iniciarVotacaoPauta() {
+        this.status = StatusPautaEnum.EM_VOTACAO;
+    }
+
+    public void determinarResultado() {
+        Integer diferençasVoto = votosFavor - votosContra;
+        this.resultado = diferençasVoto > 0 ? ResultadoPautaEnum.APROVADO
+                : diferençasVoto < 0 ? ResultadoPautaEnum.REPROVADO : ResultadoPautaEnum.INDECISIVO;
+    }
+
+    public void finalizarVotacaoPauta() {
+        this.status = StatusPautaEnum.VOTADA;
+        this.determinarResultado();
+    }
+
 }

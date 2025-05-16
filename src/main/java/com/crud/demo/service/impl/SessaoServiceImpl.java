@@ -73,15 +73,6 @@ public class SessaoServiceImpl implements SessaoService {
     }
 
     @Override
-    public SessaoIniciadaResponseDTO atualizarStatusSessao(Sessao sessao) {
-      sessao.setStatus(sessao.getStatus());
-      sessao.setHorarioInicio(sessao.getHorarioInicio());
-        Sessao atualizada = sessaoRepository.save(sessao);
-        SessaoIniciadaResponseDTO sessaoAtualizadaResponse = sessaoMapper.toIniciadaResponseDTO(atualizada);
-        return sessaoAtualizadaResponse;
-    }
-
-    @Override
     public void deletarSessao(Long id) {
         Sessao sessao = sessaoValidacaoService.validarAcao(id);
         sessaoRepository.delete(sessao);

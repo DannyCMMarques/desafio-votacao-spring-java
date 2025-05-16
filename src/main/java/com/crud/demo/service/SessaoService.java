@@ -19,5 +19,4 @@ public interface SessaoService {
 
     void deletarSessao(Long id);
 
-    SessaoIniciadaResponseDTO atualizarStatusSessao(Sessao sessao);
 }

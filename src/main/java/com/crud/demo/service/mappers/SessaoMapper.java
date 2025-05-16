@@ -23,4 +23,6 @@ public interface SessaoMapper {
     SessaoResponseDTO toResponseDTO(Sessao sessao);
 
     SessaoIniciadaResponseDTO toIniciadaResponseDTO(Sessao sessao);
+
+    Sessao toEntity(SessaoResponseDTO dto);
 }
