@@ -2,8 +2,10 @@ package com.crud.demo.service;
 
 import org.springframework.data.domain.Page;
 
+import com.crud.demo.domain.Pauta;
 import com.crud.demo.service.dto.pauta.PautaRequestDTO;
 import com.crud.demo.service.dto.pauta.PautaResponseDTO;
+import com.crud.demo.service.dto.pauta.PautaResultadoDTO;
 
 public interface PautaService {
 
@@ -14,6 +16,8 @@ public interface PautaService {
     void deletarPauta(Long id);
 
     Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction);
+
+    public PautaResultadoDTO atualizarPauta(Pauta pauta);
 
     PautaResponseDTO buscarPorId(Long id);
 

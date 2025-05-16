@@ -27,5 +27,6 @@ public class LoggingAspect {
                 joinPoint.getSignature().getName(), t.getMessage());
       throw t;
     }
+
   }
 }

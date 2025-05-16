@@ -12,6 +12,7 @@ import com.crud.demo.service.PautaService;
 import com.crud.demo.service.PautaValidacaoService;
 import com.crud.demo.service.dto.pauta.PautaRequestDTO;
 import com.crud.demo.service.dto.pauta.PautaResponseDTO;
+import com.crud.demo.service.dto.pauta.PautaResultadoDTO;
 import com.crud.demo.service.mappers.PautaMapper;
 
 import jakarta.transaction.Transactional;
@@ -50,6 +51,14 @@ public class PautaServiceImpl implements PautaService {
     }
 
     @Override
+    public PautaResultadoDTO atualizarPauta(Pauta pauta) {
+        pauta.setStatus(pauta.getStatus());
+        Pauta pautaAtualizada = pautaRepository.save(pauta);
+        PautaResultadoDTO pautaResultado = pautaMapper.toResultadoDTO(pautaAtualizada);
+        return pautaResultado;
+    }
+
+    @Override
     public void deletarPauta(Long id) {
         pautaValidacao.verificarStatusNaoVotada(id);
 
@@ -57,13 +66,13 @@ public class PautaServiceImpl implements PautaService {
     }
 
     @Override
-public Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction){
+    public Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return pautaRepository.findAll(pageable)
                 .map(pauta -> {
-                    //TODO
+                    // TODO
                     // if (pauta.getStatus() == StatusPautaEnum.VOTADA) {
                     // return pautaMapper.toResultadoDTO(pauta);
                     // }

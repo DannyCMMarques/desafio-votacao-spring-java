@@ -14,6 +14,6 @@ public interface PautaMapper {
 
   PautaResponseDTO toDto(Pauta pauta);
 
-  PautaResultadoDTO toDTO(Pauta pauta);
+  PautaResultadoDTO toResultadoDTO(Pauta pauta);
 
 }

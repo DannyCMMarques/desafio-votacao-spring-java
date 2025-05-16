@@ -14,7 +14,7 @@ private Long id;
 private VotoEnum voto;
 
 @Schema(description = "ID da sessão onde o voto foi registrado.", example = "1")
-private Long Sessao;
+private Long sessao;
 
 @Schema(description = "Dados do associado que realizou o voto.")
 private Associado associado;

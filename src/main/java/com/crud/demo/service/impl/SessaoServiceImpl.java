@@ -14,6 +14,7 @@ import com.crud.demo.repositories.SessaoRepository;
 import com.crud.demo.service.PautaValidacaoService;
 import com.crud.demo.service.SessaoService;
 import com.crud.demo.service.SessaoValidacaoService;
+import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoRequestDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 import com.crud.demo.service.mappers.SessaoMapper;
@@ -68,6 +69,15 @@ public class SessaoServiceImpl implements SessaoService {
         sessao.setDuracao(dto.getDuracao());
         Sessao atualizada = sessaoRepository.save(sessao);
         SessaoResponseDTO sessaoAtualizadaResponse = sessaoMapper.toResponseDTO(atualizada);
+        return sessaoAtualizadaResponse;
+    }
+
+    @Override
+    public SessaoIniciadaResponseDTO atualizarStatusSessao(Sessao sessao) {
+      sessao.setStatus(sessao.getStatus());
+      sessao.setHorarioInicio(sessao.getHorarioInicio());
+        Sessao atualizada = sessaoRepository.save(sessao);
+        SessaoIniciadaResponseDTO sessaoAtualizadaResponse = sessaoMapper.toIniciadaResponseDTO(atualizada);
         return sessaoAtualizadaResponse;
     }
 

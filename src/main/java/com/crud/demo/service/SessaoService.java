@@ -2,6 +2,8 @@ package com.crud.demo.service;
 
 import org.springframework.data.domain.Page;
 
+import com.crud.demo.domain.Sessao;
+import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoRequestDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 
@@ -17,4 +19,5 @@ public interface SessaoService {
 
     void deletarSessao(Long id);
 
+    SessaoIniciadaResponseDTO atualizarStatusSessao(Sessao sessao);
 }
