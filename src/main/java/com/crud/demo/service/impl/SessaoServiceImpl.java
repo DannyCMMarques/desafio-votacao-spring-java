@@ -9,15 +9,14 @@ import org.springframework.stereotype.Service;
 import com.crud.demo.domain.Pauta;
 import com.crud.demo.domain.Sessao;
 import com.crud.demo.domain.enums.StatusSessaoEnum;
-import com.crud.demo.repositories.PautaRepository;
 import com.crud.demo.repositories.SessaoRepository;
-import com.crud.demo.service.PautaValidacaoService;
 import com.crud.demo.service.SessaoService;
-import com.crud.demo.service.SessaoValidacaoService;
-import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoRequestDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 import com.crud.demo.service.mappers.SessaoMapper;
+import com.crud.demo.service.utils.DuracaoSessaoUtils;
+import com.crud.demo.service.validacoes.PautaValidacaoService;
+import com.crud.demo.service.validacoes.SessaoValidacaoService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,17 +25,18 @@ import lombok.RequiredArgsConstructor;
 public class SessaoServiceImpl implements SessaoService {
 
     private final SessaoRepository sessaoRepository;
-    private final PautaRepository pautaRepository;
     private final SessaoMapper sessaoMapper;
     private final PautaValidacaoService pautaValidacaoService;
     private final SessaoValidacaoService sessaoValidacaoService;
 
     @Override
     public SessaoResponseDTO criarSessao(SessaoRequestDTO dto) {
+        sessaoValidacaoService.verificarDuracao(dto.getDuracao(), dto.getUnidade());
+        Double duracaoMin = DuracaoSessaoUtils.converterMinutos(dto.getDuracao(), dto.getUnidade());
 
         Pauta pauta = pautaValidacaoService.verificarStatusNaoVotada(dto.getIdPauta());
-
         Sessao sessao = sessaoMapper.toEntity(dto, pauta);
+        sessao.setDuracao(duracaoMin);
         sessao.setStatus(StatusSessaoEnum.NAO_INICIADA);
         Sessao salva = sessaoRepository.save(sessao);
         SessaoResponseDTO sessaoSalvaResponse = sessaoMapper.toResponseDTO(salva);
@@ -65,6 +65,9 @@ public class SessaoServiceImpl implements SessaoService {
         Sessao sessao = sessaoValidacaoService.validarAcao(id);
         Pauta pauta = pautaValidacaoService.verificarStatusNaoVotada(dto.getIdPauta());
         sessao.setPauta(pauta);
+        sessaoValidacaoService.verificarDuracao(dto.getDuracao(), dto.getUnidade());
+        Double duracaoMin = DuracaoSessaoUtils.converterMinutos(dto.getDuracao(), dto.getUnidade());
+        dto.setDuracao(duracaoMin);
         sessao.setDuracao(dto.getDuracao());
         Sessao atualizada = sessaoRepository.save(sessao);
         SessaoResponseDTO sessaoAtualizadaResponse = sessaoMapper.toResponseDTO(atualizada);

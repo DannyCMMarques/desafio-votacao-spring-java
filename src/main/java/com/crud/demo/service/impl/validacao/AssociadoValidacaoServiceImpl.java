@@ -8,7 +8,7 @@ import com.crud.demo.domain.Associado;
 import com.crud.demo.exceptions.associado.AssociadoNaoEncontradoException;
 import com.crud.demo.exceptions.associado.CPFJaCadastradoException;
 import com.crud.demo.repositories.AssociadoRepository;
-import com.crud.demo.service.AssociadoValidacaoService;
+import com.crud.demo.service.validacoes.AssociadoValidacaoService;
 
 import lombok.RequiredArgsConstructor;
 

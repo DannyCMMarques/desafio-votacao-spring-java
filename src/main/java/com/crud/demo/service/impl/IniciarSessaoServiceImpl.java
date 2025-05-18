@@ -11,12 +11,12 @@ import com.crud.demo.repositories.PautaRepository;
 import com.crud.demo.repositories.SessaoRepository;
 import com.crud.demo.service.IniciarSessaoService;
 import com.crud.demo.service.SessaoService;
-import com.crud.demo.service.SessaoValidacaoService;
 import com.crud.demo.service.VotoService;
 import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 import com.crud.demo.service.mappers.PautaMapper;
 import com.crud.demo.service.mappers.SessaoMapper;
+import com.crud.demo.service.validacoes.SessaoValidacaoService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,8 @@ public class IniciarSessaoServiceImpl implements IniciarSessaoService {
     public Sessao iniciarSessao(Long idSessao) {
         SessaoResponseDTO sessao = sessaoService.buscarPorId(idSessao);
         Sessao sessaoEntity = sessaoMapper.toEntity(sessao);
-        LocalDateTime horarioAtual = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
+        LocalDateTime horarioAtual = LocalDateTime.now(zoneId);
         sessaoEntity.iniciarSessao(horarioAtual);
         Sessao sessaoInicializada = sessaoRepository.save(sessaoEntity);
         return sessaoInicializada;

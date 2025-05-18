@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 import com.crud.demo.domain.Associado;
 import com.crud.demo.repositories.AssociadoRepository;
 import com.crud.demo.service.AssociadoService;
-import com.crud.demo.service.AssociadoValidacaoService;
 import com.crud.demo.service.dto.associado.AssociadoRequestDTO;
 import com.crud.demo.service.dto.associado.AssociadoResponseDTO;
 import com.crud.demo.service.mappers.AssociadoMapper;
+import com.crud.demo.service.validacoes.AssociadoValidacaoService;
 
 import lombok.RequiredArgsConstructor;
 

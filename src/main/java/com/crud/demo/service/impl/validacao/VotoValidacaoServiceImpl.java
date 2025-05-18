@@ -8,13 +8,13 @@ import com.crud.demo.domain.enums.StatusSessaoEnum;
 import com.crud.demo.exceptions.VotoDuplicadoException;
 import com.crud.demo.exceptions.sessao.SessaoJaFinalizadaException;
 import com.crud.demo.exceptions.sessao.SessaoNaoIniciadaException;
-import com.crud.demo.service.VotoValidacaoService;
+import com.crud.demo.service.validacoes.VotoValidacaoService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class VotoValidacaoImpl implements VotoValidacaoService {
+public class VotoValidacaoServiceImpl implements VotoValidacaoService {
 
     @Override
     public void validar(Sessao sessao, Associado associado) {

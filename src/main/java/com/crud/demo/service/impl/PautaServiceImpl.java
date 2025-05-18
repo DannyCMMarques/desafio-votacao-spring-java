@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import com.crud.demo.domain.Pauta;
 import com.crud.demo.repositories.PautaRepository;
 import com.crud.demo.service.PautaService;
-import com.crud.demo.service.PautaValidacaoService;
 import com.crud.demo.service.dto.pauta.PautaRequestDTO;
 import com.crud.demo.service.dto.pauta.PautaResponseDTO;
 import com.crud.demo.service.dto.pauta.PautaResultadoDTO;
 import com.crud.demo.service.mappers.PautaMapper;
+import com.crud.demo.service.validacoes.PautaValidacaoService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

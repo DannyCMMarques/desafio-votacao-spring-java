@@ -9,7 +9,7 @@ import com.crud.demo.domain.enums.StatusPautaEnum;
 import com.crud.demo.exceptions.pauta.PautaNaoCadastradaException;
 import com.crud.demo.exceptions.pauta.PautaVotadaException;
 import com.crud.demo.repositories.PautaRepository;
-import com.crud.demo.service.PautaValidacaoService;
+import com.crud.demo.service.validacoes.PautaValidacaoService;
 
 import lombok.RequiredArgsConstructor;
 

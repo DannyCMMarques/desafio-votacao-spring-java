@@ -20,7 +20,7 @@ public class SessaoResponseDTO {
     private PautaResponseDTO pauta;
 
   @Schema(description = "Duração da sessão em minutos", example = "1")
-    private Integer duracao ;
+    private Double duracao ;
 
   @Schema(description = "Status atual da sessão", example = "NAO_INICIADA")
     private StatusSessaoEnum status = StatusSessaoEnum.NAO_INICIADA;

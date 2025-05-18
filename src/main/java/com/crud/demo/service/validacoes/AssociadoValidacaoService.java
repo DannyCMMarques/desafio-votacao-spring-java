@@ -1,4 +1,4 @@
-package com.crud.demo.service;
+package com.crud.demo.service.validacoes;
 
 import com.crud.demo.domain.Associado;
 

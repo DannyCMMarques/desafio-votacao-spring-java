@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
 
-package com.crud.demo.service;
+package com.crud.demo.service.validacoes;
 
 import com.crud.demo.domain.Pauta;
 

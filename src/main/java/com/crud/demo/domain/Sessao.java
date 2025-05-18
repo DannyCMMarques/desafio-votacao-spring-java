@@ -21,13 +21,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Slf4j
 public class Sessao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +41,7 @@ public class Sessao {
     @JoinColumn(name = "id_pauta", nullable = false)
     private Pauta pauta;
 
-    private Integer duracao = 1;
+    private Double duracao = 1.00;
 
     @Column(name = "horario_inicio")
     private LocalDateTime horarioInicio;
@@ -70,6 +74,7 @@ public class Sessao {
         }
         this.status = StatusSessaoEnum.FINALIZADA;
         this.horarioFim = horario;
+        log.info("FINALIZAR SESSAO");
     }
 
 }
