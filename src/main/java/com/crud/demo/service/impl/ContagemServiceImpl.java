@@ -27,7 +27,7 @@ public class ContagemServiceImpl implements ContagemService {
 
     @Override
     public Long votosAfavor(Sessao sessao) {
-        Long votosFavoraveis = sessao.getVotos().stream().filter(voto -> voto.getVoto() == true).count();
+        Long votosFavoraveis = sessao.getVotos().stream().filter(voto -> voto.getVoto()).count();
         return votosFavoraveis;
     }
 

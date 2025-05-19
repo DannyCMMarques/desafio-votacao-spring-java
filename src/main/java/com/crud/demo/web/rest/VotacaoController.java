@@ -10,14 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.crud.demo.service.VotoService;
-import com.crud.demo.service.dto.pauta.PautaRequestDTO;
-import com.crud.demo.service.dto.pauta.PautaResponseDTO;
 import com.crud.demo.service.dto.voto.VotoRequestDTO;
 import com.crud.demo.service.dto.voto.VotoResponseDTO;
 import com.crud.demo.web.rest.utils.UriLocationUtils;
 import com.crud.demo.web.rest.utils.annotations.PostSwaggerAnnotation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,8 @@ public class VotacaoController {
     @Operation(summary = "Cadastrar uma pauta")
     @PostSwaggerAnnotation
     public ResponseEntity<VotoResponseDTO> votar(
-            @PathVariable("id") Long sessaoId, @Valid @RequestBody VotoRequestDTO votoRequestDTO) {
+            @Parameter(description = "ID da sessão em que o voto será registrado") @PathVariable("id") Long sessaoId,
+            @Valid @RequestBody VotoRequestDTO votoRequestDTO) {
         VotoResponseDTO votoRealizado = votoService.criarVoto(votoRequestDTO, sessaoId);
         URI location = UriLocationUtils.criarLocationUri("api/v1/sessao", votoRealizado.getId());
         return ResponseEntity.created(location).body(votoRealizado);

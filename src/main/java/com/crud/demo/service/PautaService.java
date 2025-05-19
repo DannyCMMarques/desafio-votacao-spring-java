@@ -2,6 +2,7 @@ package com.crud.demo.service;
 
 import org.springframework.data.domain.Page;
 
+import com.crud.demo.domain.Pauta;
 import com.crud.demo.service.dto.pauta.PautaRequestDTO;
 import com.crud.demo.service.dto.pauta.PautaResponseDTO;
 
@@ -16,5 +17,7 @@ public interface PautaService {
     Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction);
 
     PautaResponseDTO buscarPorId(Long id);
+
+    Pauta buscarPautaNaoVotadaPorId(Long id);
 
 }

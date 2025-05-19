@@ -1,6 +1,7 @@
 package com.crud.demo.exceptions.handler;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,14 +44,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<RestErrorMessage> handleApiException(ApiException ex) {
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
         return ResponseEntity.status(ex.getStatus())
-                .body(new RestErrorMessage(ex.getStatus(), ex.getMessage(), LocalDateTime.now()));
+                .body(new RestErrorMessage(ex.getStatus(), ex.getMessage(), LocalDateTime.now(zoneId)));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<RestErrorMessage> genericExceptionHandler(Exception ex) {
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, MensagemExceptionEnum.ERRO_INTERNO.getMensagem(),
-                        LocalDateTime.now()));
+                .body(new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR,
+                        MensagemExceptionEnum.ERRO_INTERNO.getMensagem(),
+                        LocalDateTime.now(zoneId)));
     }
 }

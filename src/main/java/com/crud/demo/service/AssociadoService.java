@@ -16,4 +16,7 @@ public interface AssociadoService {
     AssociadoResponseDTO atualizarAssociado(Long id, AssociadoRequestDTO request);
 
     void deletarAssociado(Long id);
+
+  
+
 }

@@ -6,5 +6,5 @@ import com.crud.demo.domain.Voto;
 
 @Repository
 public interface VotoRepository extends JpaRepository<Voto,Long> {
-
+boolean existsByAssociadoId(Long id);
 }

@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,14 +25,11 @@ import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 import com.crud.demo.service.mappers.PautaMapper;
 import com.crud.demo.service.mappers.SessaoMapper;
-import com.crud.demo.service.validacoes.SessaoValidacaoService;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes unitários do IniciarSessaoServiceImpl")
 class IniciarSessaoServiceImplTest {
 
-    @Mock
-    private SessaoValidacaoService sessaoValidacao;
     @Mock
     private VotoService votoService;
     @Mock

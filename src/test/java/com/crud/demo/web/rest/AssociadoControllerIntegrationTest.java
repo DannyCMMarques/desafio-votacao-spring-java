@@ -24,9 +24,7 @@ import com.crud.demo.exceptions.associado.AssociadoNaoEncontradoException;
 import com.crud.demo.exceptions.handler.GlobalExceptionHandler;
 import com.crud.demo.service.dto.associado.AssociadoRequestDTO;
 import com.crud.demo.service.dto.associado.AssociadoResponseDTO;
-import com.crud.demo.service.dto.associado.AssociadoRequestDTO;
 import com.crud.demo.service.impl.AssociadoServiceImpl;
-import com.crud.demo.service.impl.validacao.AssociadoValidacaoServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(AssociadoController.class)
@@ -37,9 +35,6 @@ public class AssociadoControllerIntegrationTest {
 
         @MockBean
         private AssociadoServiceImpl associadoService;
-
-        @MockBean
-        private AssociadoValidacaoServiceImpl associadoValidacaoService;
 
         @Autowired
         private ObjectMapper objectMapper;

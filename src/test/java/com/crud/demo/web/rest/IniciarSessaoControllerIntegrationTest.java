@@ -22,7 +22,7 @@ import com.crud.demo.service.IniciarSessaoService;
 import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 
 @WebMvcTest(IniciarSessaoController.class)
-class IniciarSessaoControllerTest {
+class IniciarSessaoControllerIntegrationTest {
 
         @Autowired
         private MockMvc mockMvc;
