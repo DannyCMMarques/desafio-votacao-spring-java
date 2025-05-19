@@ -12,6 +12,7 @@ import com.crud.demo.service.PautaService;
 import com.crud.demo.service.dto.pauta.PautaRequestDTO;
 import com.crud.demo.service.dto.pauta.PautaResponseDTO;
 import com.crud.demo.service.mappers.PautaMapper;
+import com.crud.demo.service.validacoes.PautaValidacaoService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +27,9 @@ public class PautaServiceImpl implements PautaService {
 
     @Override
     public PautaResponseDTO criarPauta(PautaRequestDTO pautaRequestDTO) {
-
         Pauta pautaEntity = pautaMapper.toEntity(pautaRequestDTO);
-
         Pauta pautaCriada = pautaRepository.save(pautaEntity);
-
         PautaResponseDTO pautaResponse = pautaMapper.toDto(pautaCriada);
-
         return pautaResponse;
     }
 
@@ -56,24 +53,20 @@ public class PautaServiceImpl implements PautaService {
     }
 
     @Override
-public Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction){
+    public Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return pautaRepository.findAll(pageable)
-                .map(pauta -> {
-                    //TODO
-                    // if (pauta.getStatus() == StatusPautaEnum.VOTADA) {
-                    // return pautaMapper.toResultadoDTO(pauta);
-                    // }
-                    return pautaMapper.toDto(pauta);
-                });
+      int pageIndex = page < 1 ? 0 : page - 1;
+
+        Pageable pageable = PageRequest.of(pageIndex, size, sort);
+        Page<PautaResponseDTO> pautasResponse = pautaRepository.findAll(pageable)
+                .map(pautaMapper::toDto);
+        return pautasResponse;
     }
 
     @Override
     public PautaResponseDTO buscarPorId(Long id) {
         Pauta pautaEncontrada = pautaValidacao.verificarStatusNaoVotada(id);
-
         return pautaMapper.toDto(pautaEncontrada);
     }
 

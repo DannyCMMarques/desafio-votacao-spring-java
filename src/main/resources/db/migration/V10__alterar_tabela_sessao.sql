@@ -1,0 +1,6 @@
+ALTER TABLE sessao
+  ALTER COLUMN duracao TYPE NUMERIC(10,2)
+    USING duracao::NUMERIC;
+
+ALTER TABLE sessao
+  ALTER COLUMN duracao SET DEFAULT 1.00;

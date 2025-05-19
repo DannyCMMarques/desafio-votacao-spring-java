@@ -58,7 +58,7 @@ public class AssociadoController {
     @Operation(summary = "Listar associados com paginação")
     @GetSwaggerAnnotation
     public ResponseEntity<Page<AssociadoResponseDTO>> listar(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nome") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {

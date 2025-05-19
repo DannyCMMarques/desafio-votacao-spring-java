@@ -13,10 +13,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Slf4j
 public class Pauta {
 
     @Id
@@ -33,13 +41,13 @@ public class Pauta {
     private StatusPautaEnum status = StatusPautaEnum.NAO_VOTADA;
 
     @Column(name = "votos_contra", nullable = false)
-    private Integer votosContra = 0;
+    private Long votosContra = 0L;
 
     @Column(name = "votos_favor", nullable = false)
-    private Integer votosFavor = 0;
+    private Long votosFavor = 0L;
     @Column(name = "votos_totais", nullable = false)
 
-    private Integer votosTotais = 0;
+    private Long votosTotais = 0L;
 
     @Enumerated(EnumType.STRING)
     private ResultadoPautaEnum resultado = ResultadoPautaEnum.INDECISIVO;
@@ -50,4 +58,21 @@ public class Pauta {
         this.votosTotais = (votosContra == null ? 0 : votosContra)
                 + (votosFavor == null ? 0 : votosFavor);
     }
+
+    public void iniciarVotacaoPauta() {
+        this.status = StatusPautaEnum.EM_VOTACAO;
+    }
+
+    public void determinarResultado() {
+        Long diferençasVoto = votosFavor - votosContra;
+        this.resultado = diferençasVoto > 0 ? ResultadoPautaEnum.APROVADO
+                : diferençasVoto < 0 ? ResultadoPautaEnum.REPROVADO : ResultadoPautaEnum.INDECISIVO;
+    }
+
+    public void finalizarVotacaoPauta() {
+        this.status = StatusPautaEnum.VOTADA;
+        log.info("PAUTA VOTADA ");
+        this.determinarResultado();
+    }
+
 }
