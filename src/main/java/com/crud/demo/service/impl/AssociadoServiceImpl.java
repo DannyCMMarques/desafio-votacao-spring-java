@@ -45,7 +45,8 @@ public class AssociadoServiceImpl implements AssociadoService {
     public Page<AssociadoResponseDTO> listarTodosAssociados(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+         int pageIndex = page < 1 ? 0 : page - 1;
+        Pageable pageable = PageRequest.of(pageIndex, size, sort);
         Page<Associado> associadosEncontrados = associadoRepository.findAll(pageable);
         Page<AssociadoResponseDTO> associadosEncontradosResponse = associadosEncontrados.map(associadoMapper::toDTO);
         return associadosEncontradosResponse;

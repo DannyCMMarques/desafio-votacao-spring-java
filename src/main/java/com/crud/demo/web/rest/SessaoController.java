@@ -2,7 +2,6 @@ package com.crud.demo.web.rest;
 
 import java.net.URI;
 
-import org.hibernate.annotations.Parameter;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,7 +50,7 @@ public class SessaoController {
     @Operation(summary = "Listar todas as sessões")
     @GetSwaggerAnnotation
     public ResponseEntity<Page<SessaoResponseDTO>> listarSessoes(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {

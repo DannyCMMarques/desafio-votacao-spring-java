@@ -24,14 +24,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Slf4j
 public class Sessao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,7 +72,6 @@ public class Sessao {
         }
         this.status = StatusSessaoEnum.FINALIZADA;
         this.horarioFim = horario;
-        log.info("FINALIZAR SESSAO");
     }
 
 }

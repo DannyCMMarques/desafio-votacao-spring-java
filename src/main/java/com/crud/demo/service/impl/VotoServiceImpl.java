@@ -28,6 +28,7 @@ public class VotoServiceImpl implements VotoService {
     private final VotoValidacaoService votoValidacaoService;
     private final ContagemService contagemService;
 
+    @Override
     public VotoResponseDTO criarVoto(VotoRequestDTO votoRequest, Long idSessao) {
         Sessao sessao = sessaoValidacao.validarEObterSessao(idSessao);
         Long idAssociado = votoRequest.getAssociado();

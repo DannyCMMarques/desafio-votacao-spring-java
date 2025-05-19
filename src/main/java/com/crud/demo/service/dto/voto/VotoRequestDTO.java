@@ -10,15 +10,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class VotoRequestDTO {
 
     @Schema(description = "Indica o voto do associado. Deve ser true para SIM ou false para NÃO.", example = "true")
     @NotNull
     private Boolean voto;
-
-    // @Schema(description = "ID da sessão onde o voto será registrado.", example = "1")
-    // @NotNull
-    // private Long sessao;
 
     @Schema(description = "ID do associado que está votando.", example = "42")
     @NotNull

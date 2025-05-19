@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class EncerraVotacaoServiceImpl implements EncerraVotacaoService {
 
     public final SessaoRepository sessaoRepository;
@@ -33,8 +32,6 @@ public class EncerraVotacaoServiceImpl implements EncerraVotacaoService {
         sessaoRepository.save(sessao);
         pautaRepository.save(pauta);
 
-        log.info("ENCERREI {}", idSessao);
-        log.info("ENCERREI Pauta {}", pauta.getId());
 
     }
 }

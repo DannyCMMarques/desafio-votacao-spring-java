@@ -47,7 +47,9 @@ public class SessaoServiceImpl implements SessaoService {
     public Page<SessaoResponseDTO> listarSessoes(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+        int pageIndex = page < 1 ? 0 : page - 1;
+
+        Pageable pageable = PageRequest.of(pageIndex, size, sort);
         Page<Sessao> sessoesEncontradas = sessaoRepository.findAll(pageable);
         Page<SessaoResponseDTO> sessoesResponse = sessoesEncontradas.map(sessaoMapper::toDto);
         return sessoesResponse;

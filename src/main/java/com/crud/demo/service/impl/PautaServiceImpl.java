@@ -11,7 +11,6 @@ import com.crud.demo.repositories.PautaRepository;
 import com.crud.demo.service.PautaService;
 import com.crud.demo.service.dto.pauta.PautaRequestDTO;
 import com.crud.demo.service.dto.pauta.PautaResponseDTO;
-import com.crud.demo.service.dto.pauta.PautaResultadoDTO;
 import com.crud.demo.service.mappers.PautaMapper;
 import com.crud.demo.service.validacoes.PautaValidacaoService;
 
@@ -57,7 +56,9 @@ public class PautaServiceImpl implements PautaService {
     public Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+      int pageIndex = page < 1 ? 0 : page - 1;
+
+        Pageable pageable = PageRequest.of(pageIndex, size, sort);
         Page<PautaResponseDTO> pautasResponse = pautaRepository.findAll(pageable)
                 .map(pautaMapper::toDto);
         return pautasResponse;

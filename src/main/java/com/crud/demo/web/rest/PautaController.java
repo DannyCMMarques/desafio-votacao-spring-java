@@ -50,7 +50,7 @@ public class PautaController {
     @GetMapping
     @Operation(summary = "Listar todas as pautas")
     @GetSwaggerAnnotation
-    public ResponseEntity<Page<PautaResponseDTO>> listar(@Parameter(description = "Número da página") @RequestParam(defaultValue = "0") int page,
+    public ResponseEntity<Page<PautaResponseDTO>> listar(@Parameter(description = "Número da página") @RequestParam(defaultValue = "1") int page,
             @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size,
             @Parameter(description = "Campo para ordenar") @RequestParam(defaultValue = "titulo") String sortBy,
             @Parameter(description = "Direção da ordenação (asc ou desc)") @RequestParam(defaultValue = "asc") String direction) {

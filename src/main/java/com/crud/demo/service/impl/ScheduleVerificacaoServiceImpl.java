@@ -26,7 +26,7 @@ public class ScheduleVerificacaoServiceImpl implements ScheduleVerificacaoServic
 
   @Override
   @Async
-  @Scheduled(fixedRate = 5000)
+  @Scheduled(fixedRateString = "${sessao.verificacao.fixed-rate}")
   public void verificarDuracao() {
     log.info("Iniciando verificação");
     ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
@@ -34,7 +34,6 @@ public class ScheduleVerificacaoServiceImpl implements ScheduleVerificacaoServic
     List<Long> vencidas = sessaoRepository.findIdsVencidas(horarioAtual);
     vencidas.parallelStream()
         .forEach(encerraVotacaoService::finalizarSessao);
-
     log.info("Encerrando sessões com id {}", horarioAtual);
   }
 
