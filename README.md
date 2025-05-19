@@ -7,10 +7,10 @@ Este é o repositório do desafio de criação de uma API REST para gerenciar um
 | Módulo                 | Descrição                                                       | Status      |
 |------------------------|-----------------------------------------------------------------|-------------|
 | **CRUD Associados**    | Cadastro, leitura, atualização e remoção de associados         | Concluído   |
-| **Lógica de Votação**  | Recebimento e contabilização de votos “Sim” / “Não”            | Pendente    |
-| **CRUD Pautas**        | Cadastro, leitura, atualização e remoção de pautas de votação  | Em andamento|
-| **Lógica de Sessão**   | Abertura, encerramento e consulta de sessões de votação        | Pendente    |
-| **CRUD Sessão**        | Cadastro, leitura, atualização e remoção de sessões de votação | Pendente    |
+| **Lógica de Votação**  | Recebimento e contabilização de votos “Sim” / “Não”            | Concluído    |
+| **CRUD Pautas**        | Cadastro, leitura, atualização e remoção de pautas de votação  | Concluído    |
+| **Lógica de Sessão**   | Abertura, encerramento e consulta de sessões de votação        | Concluído    |
+| **CRUD Sessão**        | Cadastro, leitura, atualização e remoção de sessões de votação | Concluído    |
 
 ## 🐳 Como Clonar e Rodar o Projeto
 
