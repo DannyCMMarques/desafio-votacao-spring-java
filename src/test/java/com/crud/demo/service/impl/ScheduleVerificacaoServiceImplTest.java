@@ -65,6 +65,7 @@ class ScheduleVerificacaoServiceImplTest {
 
             verify(sessaoRepository).findIdsVencidas(agora);
             verifyNoInteractions(encerraVotacaoService);
-        }
+}
     }
+
 }

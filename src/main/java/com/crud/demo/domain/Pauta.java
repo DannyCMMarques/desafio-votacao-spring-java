@@ -45,12 +45,13 @@ public class Pauta {
 
     @Column(name = "votos_favor", nullable = false)
     private Long votosFavor = 0L;
+
     @Column(name = "votos_totais", nullable = false)
 
     private Long votosTotais = 0L;
 
     @Enumerated(EnumType.STRING)
-    private ResultadoPautaEnum resultado = ResultadoPautaEnum.INDECISIVO;
+    private ResultadoPautaEnum resultado = ResultadoPautaEnum.EM_ANDAMENTO;
 
     @PrePersist
     @PreUpdate

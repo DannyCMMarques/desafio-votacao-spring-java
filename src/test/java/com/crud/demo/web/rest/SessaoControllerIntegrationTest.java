@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(SessaoController.class)
 @DisplayName("SessaoController – testes de endpoints REST")
-class SessaoControllerTest {
+class SessaoControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

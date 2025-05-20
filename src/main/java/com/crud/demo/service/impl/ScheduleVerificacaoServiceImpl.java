@@ -28,13 +28,13 @@ public class ScheduleVerificacaoServiceImpl implements ScheduleVerificacaoServic
   @Async
   @Scheduled(fixedRateString = "${sessao.verificacao.fixed-rate}")
   public void verificarDuracao() {
-    log.info("Iniciando verificação");
     ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
     LocalDateTime horarioAtual = LocalDateTime.now(zoneId);
     List<Long> vencidas = sessaoRepository.findIdsVencidas(horarioAtual);
-    vencidas.parallelStream()
+    vencidas.stream()
         .forEach(encerraVotacaoService::finalizarSessao);
-    log.info("Encerrando sessões com id {}", horarioAtual);
+    log.info("Agendador encontrou {} sessões vencidas para encerrar.", vencidas.size());
+
   }
 
 }

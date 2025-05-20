@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(VotacaoController.class)
 @DisplayName("VotacaoController – testes de endpoint POST /api/v1/sessao/{id}/votar")
-class VotacaoControllerTest {
+class VotacaoControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

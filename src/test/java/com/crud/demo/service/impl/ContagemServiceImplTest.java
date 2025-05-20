@@ -69,8 +69,7 @@ class ContagemServiceImplTest {
 
         assertThat(resultado).isEqualTo(2L);
     }
-
-    @Test
+  @Test
     @DisplayName("Deve retornar quantidade correta de votos contrários")
     void deveRetornarQuantidadeVotosContrarios() {
         Long resultado = contagemService.votosContra(sessao);

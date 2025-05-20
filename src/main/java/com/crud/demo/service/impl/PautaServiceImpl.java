@@ -7,12 +7,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.crud.demo.domain.Pauta;
+import com.crud.demo.domain.enums.StatusPautaEnum;
+import com.crud.demo.exceptions.pauta.PautaNaoCadastradaException;
+import com.crud.demo.exceptions.pauta.PautaVotadaException;
 import com.crud.demo.repositories.PautaRepository;
 import com.crud.demo.service.PautaService;
 import com.crud.demo.service.dto.pauta.PautaRequestDTO;
 import com.crud.demo.service.dto.pauta.PautaResponseDTO;
 import com.crud.demo.service.mappers.PautaMapper;
-import com.crud.demo.service.validacoes.PautaValidacaoService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,6 @@ public class PautaServiceImpl implements PautaService {
 
     private final PautaRepository pautaRepository;
     private final PautaMapper pautaMapper;
-    private final PautaValidacaoService pautaValidacao;
 
     @Override
     public PautaResponseDTO criarPauta(PautaRequestDTO pautaRequestDTO) {
@@ -36,7 +37,8 @@ public class PautaServiceImpl implements PautaService {
     @Override
     @Transactional
     public PautaResponseDTO atualizarPauta(Long id, PautaRequestDTO dto) {
-        Pauta pautaExistente = pautaValidacao.verificarStatusNaoVotada(id);
+        Pauta pautaExistente = pautaRepository.findById(id)
+                .orElseThrow(() -> new PautaNaoCadastradaException());
 
         pautaExistente.setTitulo(dto.getTitulo());
         pautaExistente.setDescricao(dto.getDescricao());
@@ -47,16 +49,17 @@ public class PautaServiceImpl implements PautaService {
 
     @Override
     public void deletarPauta(Long id) {
-        pautaValidacao.verificarStatusNaoVotada(id);
+        Pauta pautaExistente = pautaRepository.findById(id)
+                .orElseThrow(() -> new PautaNaoCadastradaException());
 
-        pautaRepository.deleteById(id);
+        pautaRepository.delete(pautaExistente);
     }
 
     @Override
     public Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction) {
         Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
-      int pageIndex = page < 1 ? 0 : page - 1;
+        int pageIndex = page < 1 ? 0 : page - 1;
 
         Pageable pageable = PageRequest.of(pageIndex, size, sort);
         Page<PautaResponseDTO> pautasResponse = pautaRepository.findAll(pageable)
@@ -66,8 +69,20 @@ public class PautaServiceImpl implements PautaService {
 
     @Override
     public PautaResponseDTO buscarPorId(Long id) {
-        Pauta pautaEncontrada = pautaValidacao.verificarStatusNaoVotada(id);
-        return pautaMapper.toDto(pautaEncontrada);
+        Pauta pautaExistente = pautaRepository.findById(id)
+                .orElseThrow(() -> new PautaNaoCadastradaException());
+
+        return pautaMapper.toDto(pautaExistente);
     }
 
+    @Override
+    public Pauta buscarPautaNaoVotadaPorId(Long id) {
+        Pauta pauta = pautaRepository.findById(id)
+                .orElseThrow(PautaNaoCadastradaException::new);
+
+        if (pauta.getStatus() != StatusPautaEnum.NAO_VOTADA) {
+            throw new PautaVotadaException();
+        }
+        return pauta;
+    }
 }

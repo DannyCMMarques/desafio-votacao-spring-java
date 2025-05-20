@@ -1,6 +1,5 @@
 package com.crud.demo.service.dto.sessao;
 
-import com.crud.demo.domain.Pauta;
 import com.crud.demo.domain.enums.StatusSessaoEnum;
 import com.crud.demo.service.dto.pauta.PautaResponseDTO;
 

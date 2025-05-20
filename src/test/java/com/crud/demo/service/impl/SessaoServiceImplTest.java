@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,8 +29,6 @@ import com.crud.demo.service.dto.sessao.SessaoRequestDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 import com.crud.demo.service.mappers.SessaoMapper;
 import com.crud.demo.service.utils.DuracaoSessaoUtils;
-import com.crud.demo.service.validacoes.PautaValidacaoService;
-import com.crud.demo.service.validacoes.SessaoValidacaoService;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Testes unitários do SessaoServiceImpl")
@@ -40,9 +39,7 @@ class SessaoServiceImplTest {
     @Mock
     private SessaoMapper sessaoMapper;
     @Mock
-    private PautaValidacaoService pautaValidacaoService;
-    @Mock
-    private SessaoValidacaoService sessaoValidacaoService;
+    private PautaServiceImpl pautaService;
 
     @InjectMocks
     private SessaoServiceImpl sessaoService;
@@ -67,10 +64,10 @@ class SessaoServiceImplTest {
         sessaoEntidade.setStatus(StatusSessaoEnum.NAO_INICIADA);
 
         responseDTO = SessaoResponseDTO.builder()
-            .id(1L)
-            .status(StatusSessaoEnum.NAO_INICIADA)
-            .duracao(10.0)
-            .build();
+                .id(1L)
+                .status(StatusSessaoEnum.NAO_INICIADA)
+                .duracao(10.0)
+                .build();
     }
 
     @Test
@@ -79,28 +76,44 @@ class SessaoServiceImplTest {
         double minutosConvertidos = 10.0;
 
         try (MockedStatic<DuracaoSessaoUtils> mockedStatic = mockStatic(DuracaoSessaoUtils.class)) {
-
-            mockedStatic
-                    .when(() -> DuracaoSessaoUtils.converterMinutos(requestDTO.getDuracao(),
-                            requestDTO.getUnidade()))
+            mockedStatic.when(() -> DuracaoSessaoUtils.converterMinutos(10.0, DuracaoSessaoEnum.MIN))
                     .thenReturn(minutosConvertidos);
 
-            when(pautaValidacaoService.verificarStatusNaoVotada(1L))
-                    .thenReturn(pautaEntidade);
-            when(sessaoMapper.toEntity(requestDTO, pautaEntidade))
-                    .thenReturn(sessaoEntidade);
-            when(sessaoRepository.save(sessaoEntidade))
-                    .thenReturn(sessaoEntidade);
-            when(sessaoMapper.toResponseDTO(sessaoEntidade))
-                    .thenReturn(responseDTO);
+            when(pautaService.buscarPautaNaoVotadaPorId(1L)).thenReturn(pautaEntidade);
+            when(sessaoMapper.toEntity(requestDTO, pautaEntidade)).thenReturn(sessaoEntidade);
+            when(sessaoRepository.save(sessaoEntidade)).thenReturn(sessaoEntidade);
+            when(sessaoMapper.toResponseDTO(sessaoEntidade)).thenReturn(responseDTO);
 
             SessaoResponseDTO resultado = sessaoService.criarSessao(requestDTO);
 
             assertThat(resultado).isEqualTo(responseDTO);
-            verify(sessaoValidacaoService).verificarDuracao(10.0, DuracaoSessaoEnum.MIN);
             verify(sessaoRepository).save(sessaoEntidade);
             assertThat(sessaoEntidade.getDuracao()).isEqualTo(minutosConvertidos);
             assertThat(sessaoEntidade.getStatus()).isEqualTo(StatusSessaoEnum.NAO_INICIADA);
+        }
+    }
+
+    @Test
+    @DisplayName("Deve atualizar sessão com sucesso")
+    void deveAtualizarSessaoComSucesso() {
+        double minutosConvertidos = 30.0;
+        requestDTO.setDuracao(0.5);
+        requestDTO.setUnidade(DuracaoSessaoEnum.H);
+
+        try (MockedStatic<DuracaoSessaoUtils> mockedStatic = mockStatic(DuracaoSessaoUtils.class)) {
+            mockedStatic.when(() -> DuracaoSessaoUtils.converterMinutos(0.5, DuracaoSessaoEnum.H))
+                    .thenReturn(minutosConvertidos);
+
+            when(sessaoRepository.findById(1L)).thenReturn(Optional.of(sessaoEntidade));
+            when(pautaService.buscarPautaNaoVotadaPorId(1L)).thenReturn(pautaEntidade);
+            when(sessaoRepository.save(sessaoEntidade)).thenReturn(sessaoEntidade);
+            when(sessaoMapper.toResponseDTO(sessaoEntidade)).thenReturn(responseDTO);
+
+            SessaoResponseDTO resultado = sessaoService.atualizarSessao(1L, requestDTO);
+
+            assertThat(resultado).isEqualTo(responseDTO);
+            assertThat(sessaoEntidade.getPauta()).isEqualTo(pautaEntidade);
+            assertThat(sessaoEntidade.getDuracao()).isEqualTo(minutosConvertidos);
         }
     }
 
@@ -125,51 +138,22 @@ class SessaoServiceImplTest {
     @Test
     @DisplayName("Deve buscar sessão por ID com sucesso")
     void deveBuscarSessaoPorIdComSucesso() {
-        when(sessaoValidacaoService.validarEObterSessao(1L)).thenReturn(sessaoEntidade);
+        when(sessaoRepository.findById(1L)).thenReturn(Optional.of(sessaoEntidade));
         when(sessaoMapper.toDto(sessaoEntidade)).thenReturn(responseDTO);
 
         SessaoResponseDTO resultado = sessaoService.buscarPorId(1L);
 
         assertThat(resultado).isEqualTo(responseDTO);
-        verify(sessaoValidacaoService).validarEObterSessao(1L);
-    }
-
-    @Test
-    @DisplayName("Deve atualizar sessão com sucesso")
-    void deveAtualizarSessaoComSucesso() {
-        double minutosConvertidos = 30.0;
-        requestDTO.setDuracao(0.5); 
-        requestDTO.setUnidade(DuracaoSessaoEnum.H);
-
-        try (MockedStatic<DuracaoSessaoUtils> mockedStatic = mockStatic(DuracaoSessaoUtils.class)) {
-
-            mockedStatic
-                    .when(() -> DuracaoSessaoUtils.converterMinutos(requestDTO.getDuracao(),
-                            requestDTO.getUnidade()))
-                    .thenReturn(minutosConvertidos);
-
-            when(sessaoValidacaoService.validarAcao(1L)).thenReturn(sessaoEntidade);
-            when(pautaValidacaoService.verificarStatusNaoVotada(1L)).thenReturn(pautaEntidade);
-            when(sessaoRepository.save(sessaoEntidade)).thenReturn(sessaoEntidade);
-            when(sessaoMapper.toResponseDTO(sessaoEntidade)).thenReturn(responseDTO);
-
-            SessaoResponseDTO resultado = sessaoService.atualizarSessao(1L, requestDTO);
-
-            assertThat(resultado).isEqualTo(responseDTO);
-            assertThat(sessaoEntidade.getPauta()).isEqualTo(pautaEntidade);
-            assertThat(sessaoEntidade.getDuracao()).isEqualTo(minutosConvertidos);
-            verify(sessaoValidacaoService).verificarDuracao(0.5, DuracaoSessaoEnum.H);
-        }
+        verify(sessaoRepository).findById(1L);
     }
 
     @Test
     @DisplayName("Deve deletar sessão com sucesso")
     void deveDeletarSessaoComSucesso() {
-        when(sessaoValidacaoService.validarAcao(1L)).thenReturn(sessaoEntidade);
+        when(sessaoRepository.findById(1L)).thenReturn(Optional.of(sessaoEntidade));
 
         sessaoService.deletarSessao(1L);
 
-        verify(sessaoValidacaoService).validarAcao(1L);
         verify(sessaoRepository).delete(sessaoEntidade);
     }
 }

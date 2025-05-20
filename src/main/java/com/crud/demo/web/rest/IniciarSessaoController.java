@@ -13,6 +13,7 @@ import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +29,7 @@ public class IniciarSessaoController {
 
     @Operation(summary = "Iniciar uma sessão existente", description = "Insira o ID da sessão que deseja iniciar.")
     public ResponseEntity<SessaoResponseDTO> iniciarSessao(
-            @PathVariable("id") Long idSessao) {
+            @Parameter(description = "ID da sessão que vai ser iniciada") @PathVariable("id") Long idSessao) {
         SessaoIniciadaResponseDTO sessaoIniciadaResponseDTO = iniciarSessao.executar(idSessao);
         URI location = URI.create("/api/v1/votacao/" + idSessao + "/start");
         return ResponseEntity.created(location).body(sessaoIniciadaResponseDTO);

@@ -11,12 +11,9 @@ import com.crud.demo.repositories.PautaRepository;
 import com.crud.demo.repositories.SessaoRepository;
 import com.crud.demo.service.IniciarSessaoService;
 import com.crud.demo.service.SessaoService;
-import com.crud.demo.service.VotoService;
 import com.crud.demo.service.dto.sessao.SessaoIniciadaResponseDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
-import com.crud.demo.service.mappers.PautaMapper;
 import com.crud.demo.service.mappers.SessaoMapper;
-import com.crud.demo.service.validacoes.SessaoValidacaoService;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +22,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IniciarSessaoServiceImpl implements IniciarSessaoService {
 
-    private final SessaoValidacaoService sessaoValidacao;
-    private final VotoService votoService;
     private final SessaoMapper sessaoMapper;
     private final SessaoService sessaoService;
-    private final PautaMapper pautaMapper;
 
     private final PautaRepository pautaRepository;
     private final SessaoRepository sessaoRepository;
