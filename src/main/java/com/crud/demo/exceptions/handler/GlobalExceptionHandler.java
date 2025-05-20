@@ -1,7 +1,7 @@
 package com.crud.demo.exceptions.handler;
 
-import java.security.SignatureException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.crud.demo.exceptions.ApiException;
 import com.crud.demo.exceptions.RestErrorMessage;
+import com.crud.demo.exceptions.enums.MensagemExceptionEnum;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -43,20 +44,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<RestErrorMessage> handleApiException(ApiException ex) {
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
         return ResponseEntity.status(ex.getStatus())
-                .body(new RestErrorMessage(ex.getStatus(), ex.getMessage(), LocalDateTime.now()));
-    }
-
-    @ExceptionHandler(SignatureException.class)
-    public ResponseEntity<RestErrorMessage> handleSignatureException(SignatureException ex) {
-        RestErrorMessage errorMessage = new RestErrorMessage(HttpStatus.UNAUTHORIZED, "O token está inválido", LocalDateTime.now());
-        return new ResponseEntity<>(errorMessage, HttpStatus.UNAUTHORIZED);
+                .body(new RestErrorMessage(ex.getStatus(), ex.getMessage(), LocalDateTime.now(zoneId)));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<RestErrorMessage> genericExceptionHandler(Exception ex) {
+        ZoneId zoneId = ZoneId.of("America/Sao_Paulo");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.",
-                        LocalDateTime.now()));
+                .body(new RestErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR,
+                        MensagemExceptionEnum.ERRO_INTERNO.getMensagem(),
+                        LocalDateTime.now(zoneId)));
     }
 }
