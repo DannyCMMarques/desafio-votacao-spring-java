@@ -116,7 +116,7 @@ Durante o desenvolvimento da aplicação, algumas decisões foram tomadas visand
 | **CRUD Pautas**        | Cadastro, leitura, atualização, remoção e listagem com paginação e ordenação               |
 | **CRUD Sessões**       | Cadastro, leitura, atualização, remoção e listagem com paginação e ordenação               |
 | **Iniciar Sessão**     | Iniciar uma sessão de votação com `PATCH /sessoes/{id}/start`                              |
-| **Lógica de Votação**  | Realizar votação com `POST /sessoes/{id}/votar`                                            |
+| **Votar**  | Realizar votação com `POST /sessoes/{id}/votar`                                            |
 
 ---
 
