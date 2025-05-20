@@ -85,6 +85,25 @@ Para executar todos os testes automatizados da aplicação, use o comando abaixo
 mvn test
 ````
 ---
+## ⚙️ Decisões Técnicas
+
+Durante o desenvolvimento da aplicação, algumas decisões foram tomadas visando garantir clareza, escalabilidade, manutenibilidade e confiabilidade:
+
+- Foi adotado o uso de **DTOs específicos por contexto** (como `PautaResultadoDTO` e `SessaoDTO`) para evitar vazamento de entidades de domínio e facilitar a evolução da API sem quebrar contratos públicos.
+  
+- Os status (`NAO_VOTADA`, `EM_VOTACAO`, `VOTADA`, etc.) foram definidos como **enums controlados exclusivamente pelo backend**, garantindo integridade das regras de negócio e impedindo que valores inválidos sejam atribuídos via requisições externas.
+
+- A **ordenação e paginação** foram implementadas em todos os endpoints de listagem, o que proporciona mais eficiência nas consultas e uma melhor experiência de consumo por parte do cliente ou front-end.
+
+- Foi implementado um `LoggingAspect` utilizando **Spring AOP**, responsável por registrar logs de entrada, saída e erro em métodos de forma **não intrusiva**, centralizando o rastreio da aplicação sem poluir a lógica de negócio.
+
+- Para garantir que a sessão de votação seja encerrada no tempo correto, foi implementada uma rotina com `@Scheduled` e `@Async` que realiza um polling a cada 5 segundos. Esse mecanismo  garante o encerramento das sessões no tempo certo. Essa abordagem oferece automação real, evita verificações manuais dispersas e garante que o status, resultado e horário de fim sejam atualizados de forma consistente, mesmo sem interação do usuário.
+
+- Utilizei o **Flyway** para o versionamento e gerenciamento automático do schema do banco de dados. Com isso, qualquer atualização nas tabelas pode ser aplicada de forma controlada, reprodutível e segura em diferentes ambientes (local, homologação, produção etc).
+
+- Foi adotada a estratégia de **versionamento via URL (URI Versioning)**, estruturando todos os endpoints sob o caminho `/api/v1/`. Essa abordagem facilita a evolução da API, permitindo que futuras versões sejam adicionadas sem quebrar compatibilidade com integrações já existentes.
+
+---
 
 ## 📌 Funcionalidades da API
 
