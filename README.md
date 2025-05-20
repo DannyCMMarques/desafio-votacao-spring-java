@@ -1,37 +1,41 @@
-# 🗳️ Desafio Votação
+# 🗳️ Desafio Técnico - API de Votação para Cooperativas
 
-## Objetivo
+## 📋 Descrição do Desafio
 
-No cooperativismo, cada associado possui um voto e as decisões são tomadas em assembleias, por votação. Imagine que você deve criar uma solução para dispositivos móveis para gerenciar e participar dessas sessões de votação.
+No cooperativismo, cada associado possui direito a um voto, e as decisões são tomadas por meio de assembleias. Este desafio consiste no desenvolvimento de uma **API REST** em Java com Spring Boot para gerenciar sessões de votação via dispositivos móveis. A solução deve ser hospedada na nuvem e permitir:
 
-Essa solução deve ser executada na nuvem e promover as seguintes funcionalidades através de uma API REST:
-
-- Cadastrar uma nova pauta
-- Abrir uma sessão de votação em uma pauta (a sessão de votação deve ficar aberta por um tempo determinado na chamada de abertura ou 1 minuto por default)
-- Receber votos dos associados em pautas (os votos são apenas 'Sim'/'Não'. Cada associado é identificado por um id único e pode votar apenas uma vez por pauta)
-- Contabilizar os votos e dar o resultado da votação na pauta
-
-> A segurança das interfaces pode ser abstraída. A solução deve ser construída em Java, usando Spring Boot.
-
-**Requisitos Técnicos Importantes:**
-- ✅ Tratamento de erros e exceções
-- ✅ Uso de testes automatizados
-- ✅ Documentação do código e da API
-- ✅ Logs da aplicação
-- ✅ Mensagens e organização dos commits
-- ✅ Explicação breve das escolhas tomadas
+- ✅ Cadastro de novas pautas
+- ✅ Abertura de sessões de votação com tempo determinado (default de 1 minuto)
+- ✅ Registro de votos únicos por associado em cada pauta (`Sim` ou `Não`)
+- ✅ Contabilização dos votos e retorno do resultado da votação
+- ✅ Persistência dos dados mesmo após reinício da aplicação
 
 ---
 
-## 🚀 Funcionalidades
+## 🚀 Tecnologias Utilizadas
 
-| Módulo                 | Descrição                                                                 |
-|------------------------|---------------------------------------------------------------------------|
-| **CRUD Associados**    | Cadastro, leitura, atualização e remoção de associados, com paginação     |
-| **CRUD Pautas**        | Cadastro, leitura, atualização e remoção de pautas de votação             |
-| **CRUD Sessões**       | Cadastro, leitura, atualização e remoção de sessões, com paginação        |
-| **Lógica de Sessão**   | Iniciar sessão com PATCH /sessao/iniciar/{id}                             |
-| **Lógica de Votação**  | Recebimento de votos com POST /voto                                       |
+- Java 17
+- Spring Boot
+- Spring Data JPA
+- Spring AOP
+- Spring Scheduling (`@Scheduled`) 
+- Banco de dados H2 / PostgreSQL
+- Swagger/OpenAPI
+- JUnit e Mockito
+- Flyway 
+- Docker 
+- Lombok
+- MapStruct 
+
+## 🏗️ Arquitetura
+
+A aplicação segue uma arquitetura baseada em:
+
+- **Camada Controller:** Responsável por receber e responder às requisições da API.
+- **Camada Service:** Contém a lógica de negócio.
+- **Camada Repository:** Abstrai a comunicação com o banco de dados.
+- **Camada DTOs e Mappers:** Facilita a comunicação entre camadas e separa entidades do modelo de domínio.
+- **Camada de Exceptions:** Trata erros específicos e retorna mensagens amigáveis para o cliente.
 
 ---
 
@@ -46,16 +50,61 @@ docker-compose up
 
 ---
 
-## 🛠️ Documentação Swagger
 
-Acesse: `http://localhost:8080/swagger-ui.html`
+## 📚 Documentação da API (Swagger)
+
+
+A documentação da API está disponível via Swagger UI, permitindo explorar e testar os endpoints diretamente pelo navegador.
+
+🔗 Acesse: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+> Certifique-se de que a aplicação está rodando localmente antes de acessar o link.
+
+---
+## 🧪 Testes Automatizados
+
+Para garantir a confiabilidade da aplicação e a robustez das regras de negócio, foram implementados testes automatizados com foco em:
+
+- **Testes de Integração nos Controllers:** para validar o comportamento completo da aplicação em cenários reais de requisição e resposta HTTP.
+- **Testes Unitários nas Camadas de Serviço:** utilizando `Mockito` para isolar dependências e garantir que cada unidade da lógica funcione corretamente.
+
+### 📦 Tecnologias utilizadas nos testes
+
+- [✅] JUnit 5
+- [✅] Mockito
+- [✅] Spring Boot Test
+- [✅] MockMvc (para testes com endpoints REST)
+
+
+### ▶️ Executar os testes
+
+
+Para executar todos os testes automatizados da aplicação, use o comando abaixo:
+
+```bash
+mvn test
+````
+---
+
+## 📌 Funcionalidades da API
+
+| Módulo                 | Descrição                                                                                  |
+|------------------------|---------------------------------------------------------------------------------------------|
+| **CRUD Associados**    | Cadastro, leitura, atualização, remoção e listagem com paginação e ordenação               |
+| **CRUD Pautas**        | Cadastro, leitura, atualização, remoção e listagem com paginação e ordenação               |
+| **CRUD Sessões**       | Cadastro, leitura, atualização, remoção e listagem com paginação e ordenação               |
+| **Iniciar Sessão**     | Iniciar uma sessão de votação com `PATCH /sessoes/{id}/start`                              |
+| **Lógica de Votação**  | Realizar votação com `POST /sessoes/{id}/votar`                                            |
 
 ---
 
-# 🧪 Passo a Passo para Testar a API
+##  🔍  Entendendo o Fluxo Principal
 
-## 1. Criar um Associado
+Esta seção apresenta um exemplo real do fluxo da aplicação, com destaque para a estrutura dos DTOs, o comportamento da sessão e os principais cenários de erro tratados.
 
+---
+
+### 1. Criação de um associado 
 **POST /associados**
 
 ```json
@@ -63,14 +112,52 @@ Acesse: `http://localhost:8080/swagger-ui.html`
   "nome": "Danielly Marques",
   "cpf": "12345678111"
 }
+
 ```
 
+**Resposta:**
+
+```json
+{
+  "id": 3,
+  "nome": "Danielly Marques"
+}
+```
+**GET /associados?page=1&size=10**
+```json
+{
+  "content": [
+    {
+      "id": 2,
+      "nome": "Aline"
+    },
+    {
+      "id": 1,
+      "nome": "João da Silva"
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 10,
+    "sort": {
+      "empty": false,
+      "sorted": true,
+      "unsorted": false
+    }
+{...}
+  }
+}
+```
+- > Ao visualizar os dados dos associados não será permitido a visualização do CPF desses, além disso foi implementado a páginação com ordenação.
+  > Não é possível excluir um associado que já tenha votado.
+  
 ---
 
-## 2. Criar uma Pauta
+### 2. Criação de uma Pauta a Ser Votada
 
 **POST /pauta**
 
+**Resposta:**
 ```json
 {
   "id": 3,
@@ -79,12 +166,15 @@ Acesse: `http://localhost:8080/swagger-ui.html`
   "status": "NAO_VOTADA"
 }
 ```
+- >A pauta possui três **status principais**, que são gerenciados automaticamente pela aplicação: `NAO_VOTADA`: Pauta criada e disponível para ser votada em uma sessão, `EM_VOTACAO`: Sessão de votação iniciada e em andamento. Uma vez em votação, ela não pode ser escolhida novamente para uma nova sessão e `VOTADA`: Votação encerrada, com resultado consolidado.
+  >Pautas só podem ser excluídas/atualizadas se estiverem com status NAO_VOTAD
 
----
 
-## 3. Criar uma Sessão
+### 3. Criar uma Sessão
 
 **POST /sessao**
+
+**Resposta:**
 
 ```json
 {
@@ -99,20 +189,106 @@ Acesse: `http://localhost:8080/swagger-ui.html`
   "status": "NAO_INICIADA"
 }
 ```
+##### Ao criar uma sessão, é informada a **duração** desejada para essa pauta, bem como a **unidade de tempo**, que pode ser:
 
----
+##### - SEG` (segundos)
+##### - MIN` (minutos)
+##### - H` (horas)
 
-## 4. Iniciar a Sessão
+- > Essa abordagem oferece **flexibilidade na requisição**, enquanto internamente o valor é salvo **padronizado em minutos no banco de dados**, garantindo consistência.
 
-**PATCH /sessao/iniciar/3**
 
----
-
-## 5. Votar
-
-**POST /voto**
+#####  Exemplos de Entrada
+##### - Exemplo 1: Entrada em segundos
+  
+  ##### **Requisição:**
+```json
+{
+  "idPauta": 1,
+  "duracao": 30,
+  "unidade": "SEG"
+}
+```
+##### **Resposta:**
 
 ```json
+{
+  "id": 2,
+  "pauta": { ...},
+  "duracao": 0.5,
+  "status": "NAO_INICIADA"
+}
+````
+##### - Exemplo 2: Entrada em horas
+  
+#####  **Requisição:**
+
+```json
+{
+  "idPauta": 4,
+  "duracao": 5,
+  "unidade": "H"
+}
+````
+##### **Resposta:**
+
+```json
+{
+  "id": 4,
+  "pauta": {  ...
+  },
+  "duracao": 300,
+  "status": "NAO_INICIADA"
+}
+```
+
+---
+
+### 4. Inicializando a sessão 
+
+**PATCH /sessao/{id}/start**
+
+```json
+{
+  "id": 3,
+  "pauta": {
+    "id": 3,
+    "titulo": "Criar um novo artigo",
+    "descricao": "Proposta de criação de artigo.",
+    "status": "EM_VOTACAO",
+    "votosContra": 0,
+    "votosFavor": 0,
+    "votosTotais": 0,
+    "resultado": "EM_VOTACAO"
+  },
+  "duracao": 5,
+  "status": "EM_ANDAMENTO",
+  "horarioInicio": "19/05/2025 18:49:12",
+  "horarioFim": null,
+  "votos": []
+}
+```
+- >Ao inicializar uma sessão por meio de uma requisição `PATCH`, os seguintes comportamentos são acionados: A sessão recebe o **horário atual como `horarioInicio`**, O status da sessão é alterado de `NAO_INICIADA` para `EM_ANDAMENTO`,É retornado o DTO atualizado com os novos campos: `horarioInicio`, `horarioFim` (inicialmente `null`) e a lista de `votos`.
+  > Não é possível excluir ou editar uma sessão que já esteja em andamento 
+ 
+---
+
+### 5. Votar
+
+**POST sessao/{idSessao}/votar**
+
+**Request:**
+
+```json
+{
+  "voto": true,
+  "idAssociado":1
+  }
+```
+**Resposta:**
+
+```json
+
 {
   "id": 1,
   "voto": "SIM",
@@ -122,12 +298,12 @@ Acesse: `http://localhost:8080/swagger-ui.html`
   }
 }
 ```
-
 ---
 
-## 6. Ver Sessão em Andamento
+### 6. Ver Sessão em Andamento
+**GET sessao/{id}**
 
-Exemplo de resposta após votos:
+**Exemplo de resposta após votos:**
 
 ```json
  {
@@ -140,7 +316,7 @@ Exemplo de resposta após votos:
         "votosContra": 0,
         "votosFavor": 2,
         "votosTotais": 2,
-        "resultado": "EM_ANDAMENTO"
+        "resultado": "EM_VOTACAO"
       },
       "duracao": 5,
       "status": "EM_ANDAMENTO",
@@ -167,11 +343,11 @@ Exemplo de resposta após votos:
       ]
     }
 ```
+- > Atualização Dinâmica do Resultado: Durante a sessão a cada voto recebido, a lista `votos` da sessão é atualizada. O DTO `PautaResultadoDTO` entra em ação para refletir em tempo real:`votosFavor`, `votosContra`, `votosTotais`
 
----
+### 7. Com o encerramento da sessão é possível visualizar como ficou a pauta 
 
-## 7. Resultado Final Após Encerramento
-
+** GET pauta/{id} ** 
 ### Pauta:
 
 ```json
@@ -184,20 +360,16 @@ Exemplo de resposta após votos:
   "resultado": "APROVADO"
 }
 ```
+- > **Nota:** O campo `resultado` (ex: `APROVADO`, `REPROVADO`, `INDECISIVO`) só é efetivamente preenchido após o encerramento automático da sessão via `@Scheduled`, garantindo que os votos considerados sejam apenas os registrados dentro do tempo limite.
+---
+Essa abordagem torna o fluxo de votação **totalmente autônomo e confiável**, sem necessidade de intervenção externa para encerrar sessões ou calcular resultados.
 
-### Sessão:
+### 8- Como já ficou a sessão após ela ser fechada
+
+** GET sessao/{id} **
 
 ```json
-{
-  "id": 3,
-  "status": "FINALIZADA",
-  "horarioFim": "19/05/2025 18:54:16"
-}
-```
 
----
-
-## 8- Como já ficou a sessão após ela ser fechada
 {
       "id": 3,
       "pauta": {
@@ -266,11 +438,14 @@ Exemplo de resposta após votos:
       ]
     }
   ],
+```
+- > Quando uma sessão expira, ela é encerrada automaticamente, e os seguintes efeitos ocorrem:O campo `horarioFim` é preenchido, O status da sessão muda para `FINALIZADA`e a pauta associada é marcada como `VOTADA`.
 
+---
+### ⚠️ Cenários de Erro (Tratamento de erros e exceções)
+A aplicação trata adequadamente os erros mais comuns durante o processo de votação, retornando respostas com status HTTP apropriados e mensagens claras para o cliente. Isso garante robustez, previsibilidade e boa experiência de uso.
 
-## ⚠️ Cenários de Erro
-
-### CPF Já Cadastrado
+#### Ao cadastrar um CPF já cadastrado
 
 ```json
 {
@@ -279,25 +454,7 @@ Exemplo de resposta após votos:
 }
 ```
 
-### Pauta Inexistente
-
-```json
-{
-  "status": "NOT_FOUND",
-  "message": "Pauta não encontrada com o ID informado."
-}
-```
-
-### Sessão Não Encontrada
-
-```json
-{
-  "status": "NOT_FOUND",
-  "message": "Sessão não encontrada com ID informado"
-}
-```
-
-### Associado Já Votou
+#### Evitar que um mesmo associado vote mais de uma vez na mesma pauta 
 
 ```json
 {
@@ -306,7 +463,7 @@ Exemplo de resposta após votos:
 }
 ```
 
-### Sessão Já Encerrada
+#### Evitar o registro de votos após a sessão ser encerrada
 
 ```json
 {
@@ -315,7 +472,7 @@ Exemplo de resposta após votos:
 }
 ```
 
-### Sessão Não Iniciada
+#### Evitar o registro de votos antes da sessão ser inicializada
 
 ```json
 {
@@ -323,27 +480,5 @@ Exemplo de resposta após votos:
   "message": "Essa ação não é possível ser realizada, pois, a sessão ainda não foi inicializada"
 }
 ```
-
 ---
 
-## 🕒 Criar Sessão com Diferentes Unidades de Tempo
-
-```json
-{
-  "idPauta": 1,
-  "duracao": 30,
-  "unidade": "SEG"
-}
-```
-
-```json
-{
-  "idPauta": 4,
-  "duracao": 5,
-  "unidade": "H"
-}
-```
-
----
-
-> ✅ Projeto desenvolvido com foco em qualidade, cobertura de testes, tratamento de erros, documentação e logs.
