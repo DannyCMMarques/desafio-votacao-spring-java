@@ -46,6 +46,7 @@ A aplicação segue uma arquitetura baseada em:
 
 ```bash
 git clone https://github.com/DannyCMMarques/desafio-votacao-spring-java.git
+cd desafio-votacao-spring-java 
 docker-compose build
 docker-compose up
 ```
