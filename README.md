@@ -31,11 +31,14 @@ No cooperativismo, cada associado possui direito a um voto, e as decisões são 
 
 A aplicação segue uma arquitetura baseada em:
 
-- **Camada Controller:** Responsável por receber e responder às requisições da API.
-- **Camada Service:** Contém a lógica de negócio.
-- **Camada Repository:** Abstrai a comunicação com o banco de dados.
-- **Camada DTOs e Mappers:** Facilita a comunicação entre camadas e separa entidades do modelo de domínio.
-- **Camada de Exceptions:** Trata erros específicos e retorna mensagens amigáveis para o cliente.
+- **Camada Controller (`web.rest`)**: Responsável por receber e responder às requisições da API.
+- **Camada Service (`service`)**: Contém a lógica de negócio da aplicação.
+- **Camada Repository (`repositories`)**: Abstrai a comunicação com o banco de dados usando Spring Data JPA.
+- **Camada de DTOs e Mappers (`service.dto` / `service.mappers`)**: Facilita a comunicação entre camadas e separa entidades do modelo de domínio.
+- **Camada de Exceptions (`exceptions`)**: Trata erros específicos e retorna mensagens amigáveis para o cliente.
+- **Camada de Domínio (`domain`)**: Contém as entidades principais da aplicação como `Pauta`, `Sessao`, `Associado` e `Voto`.
+- **Camada AOP (`aop.logging`)**: Responsável pelo log de entrada, saída e erros usando Spring AOP.
+
 
 ---
 
