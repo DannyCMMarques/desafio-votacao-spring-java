@@ -8,8 +8,8 @@ import com.crud.demo.domain.Voto;
 import com.crud.demo.exceptions.VotoDuplicadoException;
 import com.crud.demo.exceptions.associado.AssociadoJaVotouException;
 import com.crud.demo.exceptions.associado.AssociadoNaoEncontradoException;
-import com.crud.demo.repositories.VotoRepository;
 import com.crud.demo.repositories.AssociadoRepository;
+import com.crud.demo.repositories.VotoRepository;
 import com.crud.demo.service.ContagemService;
 import com.crud.demo.service.SessaoService;
 import com.crud.demo.service.VotoService;
@@ -18,9 +18,11 @@ import com.crud.demo.service.dto.voto.VotoResponseDTO;
 import com.crud.demo.service.mappers.VotoMapper;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VotoServiceImpl implements VotoService {
 
     private final VotoRepository votoRepository;
@@ -34,7 +36,8 @@ public class VotoServiceImpl implements VotoService {
 
         Sessao sessao = sessaoService.verificarSessaoAberta(idSessao);
         Long idAssociado = votoRequest.getAssociado();
-
+        log.info("Id associado{}", idAssociado);
+        log.info("Voto request {}", votoRequest);
         Associado associado = associadoRepository.findById(idAssociado)
                 .orElseThrow(AssociadoNaoEncontradoException::new);
         this.verificarVotoDuplicado(sessao, associado);

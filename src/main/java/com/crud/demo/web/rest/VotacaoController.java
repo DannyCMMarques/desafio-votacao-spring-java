@@ -30,7 +30,7 @@ public class VotacaoController {
     private final VotoService votoService;
 
     @PostMapping("/{id}/votar")
-    @Operation(summary = "Cadastrar uma pauta")
+    @Operation(summary = "Votar")
     @PostSwaggerAnnotation
     public ResponseEntity<VotoResponseDTO> votar(
             @Parameter(description = "ID da sessão em que o voto será registrado") @PathVariable("id") Long sessaoId,
