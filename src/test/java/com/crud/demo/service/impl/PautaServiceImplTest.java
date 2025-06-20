@@ -1,6 +1,7 @@
 package com.crud.demo.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -19,8 +20,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.crud.demo.domain.Pauta;
+import com.crud.demo.domain.enums.StatusPautaEnum;
 import com.crud.demo.exceptions.pauta.PautaNaoCadastradaException;
 import com.crud.demo.repositories.PautaRepository;
 import com.crud.demo.service.dto.pauta.PautaRequestDTO;
@@ -124,23 +127,30 @@ class PautaServiceImplTest {
         assertThrows(PautaNaoCadastradaException.class, () -> pautaService.deletarPauta(99L));
     }
 
-    @Test
-    @DisplayName("Deve listar pautas com sucesso")
-    void deveListarPautasComSucesso() {
-        int page = 1, size = 2;
-        String sortBy = "titulo", direction = "asc";
-        Pageable pageable = PageRequest.of(0, size, Sort.by(sortBy).ascending()); 
-        Page<Pauta> pageEntity = new PageImpl<>(List.of(pautaEntity), pageable, 1);
-        when(pautaRepository.findAll(pageable)).thenReturn(pageEntity);
-        when(pautaMapper.toDto(pautaEntity)).thenReturn(pautaResponseDTO);
+  @Test
+@DisplayName("Deve listar pautas com sucesso com filtros de título e status")
+void deveListarPautasComSucesso() {
+    int page = 1, size = 2;
+    String sortBy = "titulo", direction = "asc";
+    String titulo = "Reforma", 
+           directionLower = direction.toLowerCase();
+    StatusPautaEnum status = StatusPautaEnum.NAO_VOTADA;
 
-        Page<PautaResponseDTO> resultado = pautaService.listarPautas(page, size, sortBy, direction);
+    Pageable pageable = PageRequest.of(page - 1, size, Sort.by(sortBy).ascending());
 
-        assertThat(resultado.getContent()).containsExactly(pautaResponseDTO);
-        assertThat(resultado.getTotalElements()).isEqualTo(1);
-        verify(pautaRepository).findAll(pageable);
-        verify(pautaMapper).toDto(pautaEntity);
-    }
+    Page<Pauta> pageEntity = new PageImpl<>(List.of(pautaEntity), pageable, 1);
+
+    when(pautaRepository.findAll(any(Specification.class), eq(pageable))).thenReturn(pageEntity);
+    when(pautaMapper.toDto(pautaEntity)).thenReturn(pautaResponseDTO);
+
+    Page<PautaResponseDTO> resultado = pautaService.listarPautas(page, size, sortBy, direction, titulo, status);
+
+    assertThat(resultado.getContent()).containsExactly(pautaResponseDTO);
+    assertThat(resultado.getTotalElements()).isEqualTo(1);
+
+    verify(pautaRepository).findAll(any(Specification.class), eq(pageable));
+    verify(pautaMapper).toDto(pautaEntity);
+}
 
     @Test
     @DisplayName("Deve buscar pauta por ID com sucesso")

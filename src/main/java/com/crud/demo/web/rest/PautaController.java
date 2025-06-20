@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.crud.demo.domain.enums.StatusPautaEnum;
 import com.crud.demo.service.PautaService;
 import com.crud.demo.service.dto.pauta.PautaRequestDTO;
 import com.crud.demo.service.dto.pauta.PautaResponseDTO;
@@ -24,8 +25,6 @@ import com.crud.demo.web.rest.utils.annotations.PostSwaggerAnnotation;
 import com.crud.demo.web.rest.utils.annotations.PutSwaggerAnnotation;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -48,13 +47,16 @@ public class PautaController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar todas as pautas")
+    @Operation(summary = "Listar todas as pautas com filtros opcionais")
     @GetSwaggerAnnotation
-    public ResponseEntity<Page<PautaResponseDTO>> listar(@Parameter(description = "Número da página") @RequestParam(defaultValue = "1") int page,
-            @Parameter(description = "Tamanho da página") @RequestParam(defaultValue = "10") int size,
-            @Parameter(description = "Campo para ordenar") @RequestParam(defaultValue = "titulo") String sortBy,
-            @Parameter(description = "Direção da ordenação (asc ou desc)") @RequestParam(defaultValue = "asc") String direction) {
-        Page<PautaResponseDTO> pautas = pautaService.listarPautas(page, size, sortBy, direction);
+    public ResponseEntity<Page<PautaResponseDTO>> listar(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "id") String direction,
+            @RequestParam(required = false) String titulo,
+            @RequestParam(required = false) StatusPautaEnum status) {
+        Page<PautaResponseDTO> pautas = pautaService.listarPautas(page, size, sortBy, direction, titulo, status);
         return ResponseEntity.ok(pautas);
     }
 
