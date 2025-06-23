@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.crud.demo.domain.enums.StatusSessaoEnum;
 import com.crud.demo.service.SessaoService;
 import com.crud.demo.service.dto.sessao.SessaoRequestDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
@@ -47,15 +48,16 @@ public class SessaoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar todas as sessões")
+    @Operation(summary = "Listar sessões com filtros opcionais")
     @GetSwaggerAnnotation
     public ResponseEntity<Page<SessaoResponseDTO>> listarSessoes(
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
-
-        Page<SessaoResponseDTO> sessoes = sessaoService.listarSessoes(page, size, sortBy, direction);
+            @RequestParam(defaultValue = "desc") String direction,
+            @RequestParam(required = false) Long pautaId,
+            @RequestParam(required = false) StatusSessaoEnum status) {
+        Page<SessaoResponseDTO> sessoes = sessaoService.listarSessoesComFiltro(page, size, sortBy, direction, pautaId, status);
         return ResponseEntity.ok(sessoes);
     }
 

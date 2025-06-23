@@ -14,6 +14,7 @@ import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -40,113 +41,117 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @DisplayName("SessaoController – testes de endpoints REST")
 class SessaoControllerIntegrationTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper mapper;
-    @MockBean
-    private SessaoService sessaoService;
+        @Autowired
+        private MockMvc mockMvc;
+        @Autowired
+        private ObjectMapper mapper;
+        @MockBean
+        private SessaoService sessaoService;
 
-    private SessaoRequestDTO request;
-    private SessaoResponseDTO response;
+        private SessaoRequestDTO request;
+        private SessaoResponseDTO response;
 
-    @BeforeEach
-    void setUp() {
-        request = new SessaoRequestDTO();
-        request.setIdPauta(1L);
-        request.setDuracao(10.0);
-        request.setUnidade(DuracaoSessaoEnum.MIN);
+        @BeforeEach
+        void setUp() {
+                request = new SessaoRequestDTO();
+                request.setIdPauta(1L);
+                request.setDuracao(10.0);
+                request.setUnidade(DuracaoSessaoEnum.MIN);
 
-        response = SessaoResponseDTO.builder()
-                .id(1L)
-                .status(StatusSessaoEnum.NAO_INICIADA)
-                .duracao(10.0)
-                .build();
-    }
+                response = SessaoResponseDTO.builder()
+                                .id(1L)
+                                .status(StatusSessaoEnum.NAO_INICIADA)
+                                .duracao(10.0)
+                                .build();
+        }
 
-    @Test
-    @DisplayName(" Deve cadastrar sessão com Location com Sucesso")
-    void deveCadastrarComSucesso() throws Exception {
-        when(sessaoService.criarSessao(refEq(request)))
-                .thenReturn(response);
-        mockMvc.perform(post("/api/v1/sessao")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andExpect(header().string(HttpHeaders.LOCATION,
-                        endsWith("/api/v1/sessao/1")))
-                .andExpect(jsonPath("$.id", is(1)));
-        verify(sessaoService).criarSessao(refEq(request));
-    }
+        @Test
+        @DisplayName(" Deve cadastrar sessão com Location com Sucesso")
+        void deveCadastrarComSucesso() throws Exception {
+                when(sessaoService.criarSessao(refEq(request)))
+                                .thenReturn(response);
+                mockMvc.perform(post("/api/v1/sessao")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(request)))
+                                .andExpect(status().isCreated())
+                                .andExpect(header().string(HttpHeaders.LOCATION,
+                                                endsWith("/api/v1/sessao/1")))
+                                .andExpect(jsonPath("$.id", is(1)));
+                verify(sessaoService).criarSessao(refEq(request));
+        }
 
-    @Test
-    @DisplayName("Deve listar sessões paginadas")
-    void deveListarComSucesso() throws Exception {
-        Pageable pageable = PageRequest.of(0, 10);
-        when(sessaoService.listarSessoes(0, 10, "id", "asc"))
-                .thenReturn(new PageImpl<>(List.of(response), pageable, 1));
+        @Test
+        @DisplayName("Deve listar sessões paginadas com filtros via controller")
+        void deveListarComSucesso() throws Exception {
+                Pageable pageable = PageRequest.of(0, 10);
+                Page<SessaoResponseDTO> paginaMock = new PageImpl<>(List.of(response), pageable, 1);
 
-        mockMvc.perform(get("/api/v1/sessao")
-                .param("page", "0").param("size", "10")
-                .param("sortBy", "id").param("direction", "asc"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id", is(1)));
+                when(sessaoService.listarSessoesComFiltro(1, 10, "id", "asc", null, null))
+                                .thenReturn(paginaMock);
 
-        verify(sessaoService).listarSessoes(0, 10, "id", "asc");
-    }
+                mockMvc.perform(get("/api/v1/sessao")
+                                .param("page", "1")
+                                .param("size", "10")
+                                .param("sortBy", "id")
+                                .param("direction", "asc"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.content[0].id", is(1)));
 
-    @Test
-    @DisplayName(" Deve retornar sessão existente")
-    void deveBuscarPorIdComSucesso() throws Exception {
-        when(sessaoService.buscarPorId(1L)).thenReturn(response);
+                verify(sessaoService).listarSessoesComFiltro(1, 10, "id", "asc", null, null);
+        }
 
-        mockMvc.perform(get("/api/v1/sessao/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(1)));
+        @Test
+        @DisplayName(" Deve retornar sessão existente")
+        void deveBuscarPorIdComSucesso() throws Exception {
+                when(sessaoService.buscarPorId(1L)).thenReturn(response);
 
-        verify(sessaoService).buscarPorId(1L);
-    }
+                mockMvc.perform(get("/api/v1/sessao/1"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id", is(1)));
 
-    @Test
-    @DisplayName("Deve retornar quando sessão não encontrada")
-    void deveRetornar404QuandoNaoEncontrada() throws Exception {
-        when(sessaoService.buscarPorId(99L))
-                .thenThrow(new SessaoNaoCadastradaException());
+                verify(sessaoService).buscarPorId(1L);
+        }
 
-        mockMvc.perform(get("/api/v1/sessao/99"))
-                .andExpect(status().isNotFound());
+        @Test
+        @DisplayName("Deve retornar quando sessão não encontrada")
+        void deveRetornar404QuandoNaoEncontrada() throws Exception {
+                when(sessaoService.buscarPorId(99L))
+                                .thenThrow(new SessaoNaoCadastradaException());
 
-        verify(sessaoService).buscarPorId(99L);
-    }
+                mockMvc.perform(get("/api/v1/sessao/99"))
+                                .andExpect(status().isNotFound());
 
-    @Test
-    @DisplayName("Deve atualizar sessão existente")
-    void deveAtualizarComSucesso() throws Exception {
-        SessaoResponseDTO atualizado = SessaoResponseDTO.builder()
-                .id(1L)
-                .status(StatusSessaoEnum.EM_ANDAMENTO)
-                .duracao(15.0)
-                .build();
+                verify(sessaoService).buscarPorId(99L);
+        }
 
-        when(sessaoService.atualizarSessao(eq(1L), refEq(request)))
-                .thenReturn(atualizado);
+        @Test
+        @DisplayName("Deve atualizar sessão existente")
+        void deveAtualizarComSucesso() throws Exception {
+                SessaoResponseDTO atualizado = SessaoResponseDTO.builder()
+                                .id(1L)
+                                .status(StatusSessaoEnum.EM_ANDAMENTO)
+                                .duracao(15.0)
+                                .build();
 
-        mockMvc.perform(put("/api/v1/sessao/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is("EM_ANDAMENTO")));
+                when(sessaoService.atualizarSessao(eq(1L), refEq(request)))
+                                .thenReturn(atualizado);
 
-        verify(sessaoService).atualizarSessao(eq(1L), refEq(request));
-    }
+                mockMvc.perform(put("/api/v1/sessao/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(mapper.writeValueAsString(request)))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.status", is("EM_ANDAMENTO")));
 
-    @Test
-    @DisplayName("Deve deletar sessão existente")
-    void deveDeletarComSucesso() throws Exception {
-        mockMvc.perform(delete("/api/v1/sessao/1"))
-                .andExpect(status().isNoContent());
+                verify(sessaoService).atualizarSessao(eq(1L), refEq(request));
+        }
 
-        verify(sessaoService).deletarSessao(1L);
-    }
+        @Test
+        @DisplayName("Deve deletar sessão existente")
+        void deveDeletarComSucesso() throws Exception {
+                mockMvc.perform(delete("/api/v1/sessao/1"))
+                                .andExpect(status().isNoContent());
+
+                verify(sessaoService).deletarSessao(1L);
+        }
 
 }

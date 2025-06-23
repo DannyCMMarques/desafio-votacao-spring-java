@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.crud.demo.domain.Pauta;
@@ -22,6 +23,7 @@ import com.crud.demo.service.dto.sessao.SessaoRequestDTO;
 import com.crud.demo.service.dto.sessao.SessaoResponseDTO;
 import com.crud.demo.service.mappers.SessaoMapper;
 import com.crud.demo.service.utils.DuracaoSessaoUtils;
+import com.crud.demo.specifications.SessaoSpecification;
 
 import lombok.RequiredArgsConstructor;
 
@@ -49,15 +51,20 @@ public class SessaoServiceImpl implements SessaoService {
     }
 
     @Override
-    public Page<SessaoResponseDTO> listarSessoes(int page, int size, String sortBy, String direction) {
-        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
+    public Page<SessaoResponseDTO> listarSessoesComFiltro(int page, int size, String sortBy, String direction,
+            Long pautaId, StatusSessaoEnum status) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
-        int pageIndex = page < 1 ? 0 : page - 1;
 
-        Pageable pageable = PageRequest.of(pageIndex, size, sort);
-        Page<Sessao> sessoesEncontradas = sessaoRepository.findAll(pageable);
-        Page<SessaoResponseDTO> sessoesResponse = sessoesEncontradas.map(sessaoMapper::toDto);
-        return sessoesResponse;
+        Pageable pageable = PageRequest.of(Math.max(0, page - 1), size, sort);
+
+        Specification<Sessao> spec = Specification
+                .where(SessaoSpecification.comPautaId(pautaId))
+                .and(SessaoSpecification.comStatus(status));
+
+        Page<Sessao> sessoes = sessaoRepository.findAll(spec, pageable);
+        return sessoes.map(sessaoMapper::toDto);
     }
 
     @Override
@@ -107,7 +114,8 @@ public class SessaoServiceImpl implements SessaoService {
         }
         return sessao;
     }
-@Override
+
+    @Override
     public Sessao verificarSessaoAberta(Long id) {
         Sessao sessao = sessaoRepository.findById(id).orElseThrow(SessaoNaoCadastradaException::new);
         StatusSessaoEnum statusSessao = sessao.getStatus();

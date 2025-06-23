@@ -1,6 +1,7 @@
 package com.crud.demo.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.crud.demo.domain.Pauta;
 import com.crud.demo.domain.Sessao;
@@ -118,21 +120,30 @@ class SessaoServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deve listar sessões com sucesso")
+    @DisplayName("Deve listar sessões com sucesso com filtros")
     void deveListarSessoesComSucesso() {
         int page = 0, size = 2;
         String sortBy = "id", direction = "asc";
+        Long pautaId = 1L;
+        StatusSessaoEnum status = StatusSessaoEnum.EM_ANDAMENTO;
+
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
 
         Page<Sessao> pageEntity = new PageImpl<>(List.of(sessaoEntidade), pageable, 1);
-        when(sessaoRepository.findAll(pageable)).thenReturn(pageEntity);
+
+        when(sessaoRepository.findAll(any(Specification.class), eq(pageable)))
+                .thenReturn(pageEntity);
+
         when(sessaoMapper.toDto(sessaoEntidade)).thenReturn(responseDTO);
 
-        Page<SessaoResponseDTO> resultado = sessaoService.listarSessoes(page, size, sortBy, direction);
+        Page<SessaoResponseDTO> resultado = sessaoService.listarSessoesComFiltro(
+                page + 1, size, sortBy, direction, pautaId, status);
 
         assertThat(resultado.getContent()).containsExactly(responseDTO);
         assertThat(resultado.getTotalElements()).isEqualTo(1);
-        verify(sessaoRepository).findAll(pageable);
+
+        verify(sessaoRepository).findAll(any(Specification.class), eq(pageable));
+        verify(sessaoMapper).toDto(sessaoEntidade);
     }
 
     @Test

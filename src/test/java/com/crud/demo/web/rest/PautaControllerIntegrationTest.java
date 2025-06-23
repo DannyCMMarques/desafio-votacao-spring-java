@@ -14,9 +14,11 @@ import static org.mockito.Mockito.when;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -76,23 +78,25 @@ class PautaControllerIntegrationTest {
 
         verify(pautaService).criarPauta(refEq(pautaRequest));
     }
+@Test
+@DisplayName("Deve listar pautas paginadas com filtros opcionais")
+void deveListarComSucesso() throws Exception {
+    Pageable pageable = PageRequest.of(0, 10, Sort.by("titulo").ascending());
+    Page<PautaResponseDTO> paginaMock = new PageImpl<>(List.of(pautaResponse), pageable, 1);
 
-    @Test
-    @DisplayName(" Deve listar pautas paginadas")
-    void deveListarComSucesso() throws Exception {
-        Pageable pageable = PageRequest.of(0, 10);
-        when(pautaService.listarPautas(0, 10, "titulo", "asc"))
-                .thenReturn(new PageImpl<>(List.of(pautaResponse), pageable, 1));
+    when(pautaService.listarPautas(1, 10, "titulo", "asc", null, null))
+            .thenReturn(paginaMock);
 
-        mockMvc.perform(get("/api/v1/pauta")
-                .param("page", "0").param("size", "10")
-                .param("sortBy", "titulo").param("direction", "asc"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id", is(1)));
+    mockMvc.perform(get("/api/v1/pauta")
+            .param("page", "1") 
+            .param("size", "10")
+            .param("sortBy", "titulo")
+            .param("direction", "asc"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.content[0].id", is(1)));
 
-        verify(pautaService).listarPautas(0, 10, "titulo", "asc");
-
-    }
+    verify(pautaService).listarPautas(1, 10, "titulo", "asc", null, null);
+}
 
     @Test
     @DisplayName(" Deve retornar pauta existente")
