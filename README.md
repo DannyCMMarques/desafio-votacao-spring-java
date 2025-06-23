@@ -11,7 +11,15 @@ No cooperativismo, cada associado possui direito a um voto, e as decisões são 
 - ✅ Persistência dos dados mesmo após reinício da aplicação
 
 ---
+## 🔄 Atualização Referente ao desafio full stack 
 
+- ✅ Foi criado um **seed de associados**, populando automaticamente o banco com registros fictícios e únicos.
+- ✅ Adicionado um **seed de pautas** com descrições completas e status inicial padrão.
+- ✅ Implementado um **filtro dinâmico com Specifications** para facilitar buscas flexíveis:
+  - 🔎 Filtro de **associados por CPF**
+  - 🔎 Filtro de **pautas por status e título**
+  - 🔎 Filtro de **sessões por status**
+---
 ## 🚀 Tecnologias Utilizadas
 
 - Java 17
