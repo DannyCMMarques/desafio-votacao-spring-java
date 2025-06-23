@@ -124,13 +124,14 @@ public class AssociadoControllerIntegrationTest {
                                 eq(0),
                                 eq(10),
                                 eq("nome"),
-                                eq("asc")))
+                                eq("asc"),
+                                eq(null)))
                                 .thenReturn(page);
 
                 mockMvc.perform(get("/api/v1/associado?page=0&size=10&sortBy=nome&direction=asc"))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.content[0].nome").value("João da Silva"));
-                verify(associadoService).listarTodosAssociados(0, 10, "nome", "asc");
+                verify(associadoService).listarTodosAssociados(0, 10, "nome", "asc", null);
 
         }
 

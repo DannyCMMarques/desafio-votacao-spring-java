@@ -57,23 +57,23 @@ public class PautaServiceImpl implements PautaService {
         pautaRepository.delete(pautaExistente);
     }
 
-@Override
-public Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction, String titulo, StatusPautaEnum status) {
-    Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
-    Pageable pageable = PageRequest.of(Math.max(0, page - 1), size, sort);
+    @Override
+    public Page<PautaResponseDTO> listarPautas(int page, int size, String sortBy, String direction, String titulo,
+            StatusPautaEnum status) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(Math.max(0, page - 1), size, sort);
+        Specification<Pauta> spec = Specification
+                .where(PautaSpecification.tituloContendo(titulo))
+                .and(PautaSpecification.statusIgual(status));
 
-    Specification<Pauta> spec = Specification
-            .where(PautaSpecification.tituloContendo(titulo))
-            .and(PautaSpecification.statusIgual(status));
+        Page<Pauta> pautas = pautaRepository.findAll(spec, pageable);
+        return pautas.map(pautaMapper::toDto);
+    }
 
-    Page<Pauta> pautas = pautaRepository.findAll(spec, pageable);
-    return pautas.map(pautaMapper::toDto);
-}
     @Override
     public PautaResponseDTO buscarPorId(Long id) {
         Pauta pautaExistente = pautaRepository.findById(id)
                 .orElseThrow(() -> new PautaNaoCadastradaException());
-
         return pautaMapper.toDto(pautaExistente);
     }
 
