@@ -11,7 +11,7 @@ No cooperativismo, cada associado possui direito a um voto, e as decisões são 
 - ✅ Persistência dos dados mesmo após reinício da aplicação
 
 ---
-## 🔄 Atualização Referente ao desafio full stack 
+## 🔄 Atualização Referente ao desafio Full Stack 
 
 - ✅ Foi criado um **seed de associados**, populando automaticamente o banco com registros fictícios e únicos.
 - ✅ Adicionado um **seed de pautas** com descrições completas e status inicial padrão.
