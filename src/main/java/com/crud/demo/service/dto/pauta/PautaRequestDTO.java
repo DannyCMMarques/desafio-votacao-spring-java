@@ -10,12 +10,10 @@ import lombok.Setter;
 @Setter
 public class PautaRequestDTO {
     @NotBlank
-    @Size(max = 100)
     @Schema(description = "Título da pauta", example = "Revisão do Estatuto")
     private String titulo;
 
     @NotBlank
-    @Size(max = 500)
     @Schema(description = "Descrição detalhada da pauta", example = "Proposta de atualização dos artigos do estatuto da associação.")
     private String descricao;
 }
