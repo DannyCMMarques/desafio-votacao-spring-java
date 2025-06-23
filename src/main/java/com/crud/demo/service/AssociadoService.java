@@ -11,12 +11,10 @@ public interface AssociadoService {
 
     AssociadoResponseDTO buscarAssociadoPorId(Long id);
 
-    Page<AssociadoResponseDTO> listarTodosAssociados(int page, int size, String sortBy, String direction);
+    public Page<AssociadoResponseDTO> listarTodosAssociados(int page, int size, String sortBy, String direction, String cpf) ;
 
     AssociadoResponseDTO atualizarAssociado(Long id, AssociadoRequestDTO request);
 
     void deletarAssociado(Long id);
-
-  
 
 }

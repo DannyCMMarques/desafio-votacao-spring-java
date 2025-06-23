@@ -55,15 +55,16 @@ public class AssociadoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar associados com paginação")
+    @Operation(summary = "Listar associados com paginação e filtro opcional por CPF")
     @GetSwaggerAnnotation
     public ResponseEntity<Page<AssociadoResponseDTO>> listar(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "nome") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
-        Page<AssociadoResponseDTO> associadosRetornados = associadoService.listarTodosAssociados(page, size, sortBy,
-                direction);
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) String cpf
+    ) {
+        Page<AssociadoResponseDTO> associadosRetornados = associadoService.listarTodosAssociados(page, size, sortBy, direction, cpf);
         return ResponseEntity.ok(associadosRetornados);
     }
 

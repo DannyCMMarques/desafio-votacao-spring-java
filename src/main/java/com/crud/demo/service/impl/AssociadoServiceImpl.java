@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.crud.demo.domain.Associado;
@@ -15,6 +16,7 @@ import com.crud.demo.service.VotoService;
 import com.crud.demo.service.dto.associado.AssociadoRequestDTO;
 import com.crud.demo.service.dto.associado.AssociadoResponseDTO;
 import com.crud.demo.service.mappers.AssociadoMapper;
+import com.crud.demo.specifications.AssociadoSpecification;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,19 +48,20 @@ public class AssociadoServiceImpl implements AssociadoService {
     }
 
     @Override
-    public Page<AssociadoResponseDTO> listarTodosAssociados(int page, int size, String sortBy, String direction) {
-        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending()
+    public Page<AssociadoResponseDTO> listarTodosAssociados(int page, int size, String sortBy, String direction, String cpf) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
                 : Sort.by(sortBy).ascending();
-        int pageIndex = page < 1 ? 0 : page - 1;
-        Pageable pageable = PageRequest.of(pageIndex, size, sort);
-        Page<Associado> associadosEncontrados = associadoRepository.findAll(pageable);
-        Page<AssociadoResponseDTO> associadosEncontradosResponse = associadosEncontrados.map(associadoMapper::toDTO);
-        return associadosEncontradosResponse;
 
+        Pageable pageable = PageRequest.of(Math.max(page - 1, 0), size, sort);
+        Specification<Associado> spec = Specification.where(AssociadoSpecification.cpfContem(cpf));
+        Page<Associado> associados = associadoRepository.findAll(spec, pageable);
+        return associados.map(associadoMapper::toDTO);
     }
 
-    @Override
-    public AssociadoResponseDTO atualizarAssociado(Long id, AssociadoRequestDTO request) {
+
+@Override
+public AssociadoResponseDTO atualizarAssociado(Long id, AssociadoRequestDTO request) {
         Associado associadoAtualizar = associadoRepository.findById(id)
                 .orElseThrow(() -> new AssociadoNaoEncontradoException());
         this.verificarCPFUnico(request, id);
@@ -70,7 +73,7 @@ public class AssociadoServiceImpl implements AssociadoService {
     }
 
     @Override
-    public void deletarAssociado(Long id) {
+public void deletarAssociado(Long id) {
         Associado associado = associadoRepository.findById(id)
                 .orElseThrow(() -> new AssociadoNaoEncontradoException());
         votoService.associadoJaVotou(id);

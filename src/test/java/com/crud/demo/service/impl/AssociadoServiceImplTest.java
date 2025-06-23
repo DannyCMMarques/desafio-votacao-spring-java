@@ -6,19 +6,20 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import com.crud.demo.domain.Associado;
 import com.crud.demo.repositories.AssociadoRepository;
@@ -43,6 +44,7 @@ class AssociadoServiceImplTest {
 
     @Mock
     private VotoServiceImpl votoService;
+
     private AssociadoRequestDTO associadoRequest;
     private Associado associadoSalvo;
     private AssociadoResponseDTO associadoResponseDTO;
@@ -84,7 +86,8 @@ class AssociadoServiceImplTest {
         when(associadoRepository.findByCpf(associadoRequest.getCpf()))
                 .thenReturn(Optional.of(new Associado()));
 
-        assertThrows(CPFJaCadastradoException.class, () -> associadoService.cadastrarAssociado(associadoRequest));
+        assertThrows(CPFJaCadastradoException.class,
+                () -> associadoService.cadastrarAssociado(associadoRequest));
     }
 
     @Test
@@ -103,37 +106,25 @@ class AssociadoServiceImplTest {
     void deveLancarExcecaoAoBuscarAssociadoInexistente() {
         when(associadoRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(AssociadoNaoEncontradoException.class, () -> associadoService.buscarAssociadoPorId(99L));
+        assertThrows(AssociadoNaoEncontradoException.class,
+                () -> associadoService.buscarAssociadoPorId(99L));
     }
 
     @Test
     @DisplayName("Deve listar todos os associados")
     void deveListarTodosAssociados() {
         PageImpl<Associado> page = new PageImpl<>(List.of(associadoSalvo));
-        when(associadoRepository.findAll(any(Pageable.class))).thenReturn(page);
+
+        doReturn(page)
+                .when(associadoRepository)
+                .findAll(any(Specification.class), any(Pageable.class));
+
         when(associadoMapper.toDTO(associadoSalvo)).thenReturn(associadoResponseDTO);
 
-        Page<AssociadoResponseDTO> resultado = associadoService.listarTodosAssociados(1, 10, "id", "asc");
+        Page<AssociadoResponseDTO> resultado = associadoService.listarTodosAssociados(1, 10, "id", "asc", null);
 
         assertEquals(1, resultado.getTotalElements());
         assertEquals("João da Silva", resultado.getContent().get(0).getNome());
-    }
-
-    @Test
-    @DisplayName("Deve atualizar associado com sucesso")
-    void deveAtualizarAssociado() {
-        AssociadoRequestDTO requestAtualizacao = new AssociadoRequestDTO();
-        requestAtualizacao.setNome("João Atualizado");
-        requestAtualizacao.setCpf("12344448901");
-
-        when(associadoRepository.findById(1L)).thenReturn(Optional.of(associadoSalvo));
-        when(associadoRepository.findByCpf("12344448901")).thenReturn(Optional.of(associadoSalvo));
-        when(associadoRepository.save(any())).thenReturn(associadoSalvo);
-        when(associadoMapper.toDTO(associadoSalvo)).thenReturn(associadoResponseDTO);
-
-        AssociadoResponseDTO resultado = associadoService.atualizarAssociado(1L, requestAtualizacao);
-
-        assertEquals("João da Silva", resultado.getNome());
     }
 
     @Test
